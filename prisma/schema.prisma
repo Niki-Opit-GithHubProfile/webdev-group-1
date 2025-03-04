@@ -10,5 +10,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL="postgresql://admin:admin@204.216.221.32:5432/website_db?schema=public"")
+  url      = env("DATABASE_URL")  // This loads the value from the .env file
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
 }
