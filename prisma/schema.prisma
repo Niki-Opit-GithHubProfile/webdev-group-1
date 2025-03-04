@@ -14,9 +14,72 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  name      String
-  email     String  @unique
-  password  String
-  createdAt DateTime @default(now())
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  passwordHash     String
+  oauthProvider    String?   // Google or GitHub
+  oauthId          String?   // OAuth provider's user ID
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  transactions     Transaction[]
+  assets           Asset[]
+  sessions         Session[]
+  oauthTokens      OAuthToken[]
+}
+
+model Transaction {
+  id               Int       @id @default(autoincrement())
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id])
+  transactionType  String    // 'buy' or 'sell'
+  assetName        String    // BTC, ETH, etc.
+  quantity         Float
+  price            Float
+  totalValue       Float
+  transactionDate  DateTime  @default(now())
+  sourceAsset      String?   // If a trade, this is the source asset
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Asset {
+  id               Int       @id @default(autoincrement())
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id])
+  assetName        String    // BTC, ETH, etc.
+  quantity         Float
+  averageBuyPrice  Float
+  totalValue       Float
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model PriceHistory {
+  id          Int       @id @default(autoincrement())
+  assetName   String    // BTC, ETH, etc.
+  price       Float
+  timestamp   DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Session {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  token      String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  expiresAt  DateTime
+}
+
+model OAuthToken {
+  id               Int       @id @default(autoincrement())
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id])
+  provider         String    // Google or GitHub
+  oauthToken       String
+  oauthRefreshToken String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
