@@ -1,0 +1,21 @@
+{
+  "name": "webdev-group-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "testPrisma.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.4.1"
+  }
+}
