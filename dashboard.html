@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoinRates - Dashboard</title>
+</head>
+<body>
+     <!-- NAVBAR -->
+    <nav>
+        <div class="logo">
+            <!-- Logo and brand name-->
+            <img src="" alt="CoinRates Logo">
+            <p>CoinRates</p>
+        </div>
+
+        <ul class="menu">
+            <!-- Menu options -->
+            <li class="menu-my-dashboard">
+              <!-- Dashboard option -->
+              <img src="" alt="Dashboard">
+              <p>My Dashboard</p>
+            </li>
+            <li class="menu-convert">
+              <!-- Convert tool option -->
+              <img src="" alt="Convert tool">
+              <p>Quick Convert</p>
+            </li>
+          </ul>      
+
+        <div class="account"> 
+            <!-- Account section -->
+            <div>
+                <p>My Account</p>
+                <img src="" alt="Account">
+            </div>
+        </div>
+    </nav>
+
+<!-- MAIN CONTENT: 3 columns layout -->
+    <main class="dashboard-main">
+    
+        <!-- 1) Left Column: Asset List (cryptos) -->
+        <section class="left-column">
+            
+            <h2>Assets Overview</h2>
+            
+            <!-- List of user's assets -->
+            <ul id="cryptoList" class="crypto-list">
+                <!-- Example of a single crypto item -->
+                <li class="crypto-item"> <!-- Repeat for every crypto asset -->
+                    <img src="" alt="BTC Icon" />
+                    <div class="crypto-details">
+                    <p class="crypto-symbol">BTC</p>
+                    <p class="crypto-amount">0.85 BTC</p>
+                    <p class="crypto-value">$20,400</p>
+                    <!-- Performance tag (green/red) -->
+                    <span class="performance-tag positive">+5.2%</span>
+                    </div> 
+                </li>
+                
+            </ul>
+        </section>
+
+        <!-- 2) Center Column: Portfolio Summary & Charts -->
+        <section class="center-column">
+            
+            <div class="top-row">
+
+             <!-- Portfolio Value Section -->
+                <div class="portfolio-summary">
+                    <h2>Portfolio</h2>
+                    <!-- Currency selection (BTC, ETH, USDT, ADA, etc.) -->
+                    <label for="base-currency">Base Currency:</label>
+                    <select id="base-currency" name="base-currency">
+                        <option value="btc">BTC</option>
+                        <option value="eth">ETH</option>
+                        <option value="usdt">USDT</option>
+                    </select>
+
+                    <!-- Show total portfolio value in chosen currency + USD equivalent -->
+                    <p>Total Value: <span>0.35 BTC</span> (~ $8,400)</p>
+                    <!-- 24h change + sparkline chart -->
+                    <div class="portfolio-performance">
+                        <span class="positive">+3.2%</span>
+                        <img src="" alt="24h Sparkline Chart">
+                    </div>
+                </div>
+
+                <!-- Pie Chart: Illustrates asset distribution -->
+                <div class="pie-chart">
+                    <div class="pie-chart-container" id="portfolioPieChart">
+                        <!-- pie chart -->
+                    </div>
+                </div>
+
+                <!-- Add transaction button -->
+                <div class="add-transaction">
+                    <button id="addTransactionBtn">Add Transaction</button>
+                </div>
+
+            </div>
+
+            <!-- Bottom row: Detailed line chart for portfolio movement -->
+            <div class="bottom-row">
+                <div class="line-chart-container" id="portfolioLineChartContainer">
+                <!-- grafic/chart of the portafolio performance -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- 3) Right Column: Transaction History Table -->
+        <section class="right-column">
+            <h2>Transaction History</h2>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Pair</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Total</th>
+                        <th>Current Price</th>
+                        <th>P/L(%)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTableBody">
+                    <!-- Example transaction row -->
+                    <tr>
+                        <td>2025-03-01</td>
+                        <td>BTC/USDT</td>
+                        <td>Sell</td>
+                        <td>$24,000</td>
+                        <td>0.1 BTC</td>
+                        <td>$2,400</td>
+                        <td>$25,000</td>
+                        <td>+16.4 %</td>
+                         <!-- Delete and modify transactions -->
+                        <td class="actions">
+                            <button class="modify-btn">Modify</button>
+                            <button class="delete-btn">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    
+    </main>
+</body>
+</html>

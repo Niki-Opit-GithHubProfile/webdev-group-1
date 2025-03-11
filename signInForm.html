@@ -1,0 +1,40 @@
+
+<div id="accountModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('accountModal')">&times;</span>
+    
+         <!-- Sign Up y Log In options-->
+        <div class="form-tabs">
+            <button id="signUpTab" class="active" onclick="switchForm('signUp')">Sign Up</button>
+            <button id="logInTab" onclick="switchForm('logIn')">Log In</button>
+        </div>
+        
+        <!--Sign Up Form -->
+        <div id="signUpForm" class="form-section">
+            <h2>Sign Up</h2>
+            <button class="social-btn">Sign Up with Google</button>
+            <button class="social-btn">Sign Up with Github</button>
+            <form>
+                <label for="emailSignUp">Email</label>
+                <input type="email" id="emailSignUp" placeholder="email@example.com">
+                <label for="passwordSignUp">Password</label>
+                <input type="password" id="passwordSignUp">
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="#" onclick="switchForm('logIn')">Log In</a></p>
+        </div>
+        
+        <!-- Log In Form (hide) -->
+        <div id="logInForm" class="form-section" style="display: none;">
+            <h2>Log In</h2>
+            <form>
+                <label for="emailLogIn">Email</label>
+                <input type="email" id="emailLogIn" placeholder="email@example.com">
+                <label for="passwordLogIn">Password</label>
+                <input type="password" id="passwordLogIn">
+                <button type="submit">Log In</button>
+            </form>
+            <p>Don't have an account? <a href="#" onclick="switchForm('signUp')">Sign Up</a></p>
+        </div>
+    </div>
+</div>
