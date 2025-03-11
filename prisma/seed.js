@@ -1,25 +1,25 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { faker } = require("@faker-js/faker");
 
 async function main() {
-    console.log("Seeding database...");
+  console.log('Seeding database...');
 
-    // Create test users
-    for (let i = 0; i < 5; i++) {
-        await prisma.user.create({
-            data: {
-                email: faker.internet.email(),
-                passwordHash: faker.internet.password(),
-            },
-        });
-    }
+  // Create users
+  await prisma.user.createMany({
+    data: [
+      { email: 'user1@example.com', passwordHash: 'hashedpassword1' },
+      { email: 'user2@example.com', passwordHash: 'hashedpassword2' },
+    ],
+  });
 
-    console.log("Database seeded successfully!");
+  console.log('✅ Seeding complete.');
 }
 
 main()
-    .catch((e) => console.error(e))
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
