@@ -1,12 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+  <title><%= title %></title>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    
+  <h1>Dashboard</h1>
+  <p>Welcome, <%= user.email %></p>
+  <form action="/logout" method="POST">
+    <button type="submit">Logout</button>
+  </form>
+
+  <!-- Transaction list or form -->
+  <h2>Your Transactions</h2>
+  <ul>
+    <% if (transactions) { %>
+      <% transactions.forEach((tx) => { %>
+        <li><%= tx.type %> - <%= tx.amount %></li>
+      <% }) %>
+    <% } %>
+  </ul>
+
+  <h3>Add a new transaction</h3>
+  <form action="/transactions" method="POST">
+    <label for="type">Type:</label>
+    <input type="text" name="type" required />
+    <label for="amount">Amount:</label>
+    <input type="number" step="0.01" name="amount" required />
+    <button type="submit">Add Transaction</button>
+  </form>
 </body>
 </html>

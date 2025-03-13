@@ -2,9 +2,8 @@
   "name": "webdev-group-1",
   "version": "1.0.0",
   "description": "",
-  "main": "testPrisma.js",
+  "main": "server.js",
   "repository": {
-    "type": "git",
     "url": "git+https://github.com/Niki-Opit-GithHubProfile/webdev-group-1.git"
   },
   "keywords": [],
@@ -15,19 +14,29 @@
   },
   "homepage": "https://github.com/Niki-Opit-GithHubProfile/webdev-group-1#readme",
   "dependencies": {
+    "@prisma/client": "^6.5.0",
+    "@sendgrid/mail": "^8.1.4",
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "connect-pg-simple": "^10.0.0",
+    "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "csrf-csrf": "^3.1.0",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.13.3"
+    "nodemailer": "^6.10.0",
+    "pg": "^8.14.0",
+    "tailwindcss": "^4.0.14",
+    "uuid": "^11.1.0"
   },
   "scripts": {
     "prisma": "node prisma/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "prisma": "^6.4.1"
+    "prisma": "^6.5.0"
   }
 }
-

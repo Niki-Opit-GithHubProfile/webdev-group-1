@@ -14,6 +14,7 @@ model User {
   id            Int      @id @default(autoincrement())
   email         String   @unique
   passwordHash  String   @default("default_hash") // Temporary default value
+  emailVerified Boolean  @default(false)
   oauthProvider String?
   oauthId       String?
   createdAt     DateTime @default(now())

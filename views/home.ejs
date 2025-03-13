@@ -1,34 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+  <title><%= title %></title>
+  <!-- You can include your Tailwind or other CSS here -->
 </head>
 <body>
-    <h1>Home</h1>
-    <form action="/signup" method="POST">
-        <h2>Sign Up</h2>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Sign Up</button>
-    </form>
+  <h1>Welcome to Crypto Tracker</h1>
 
-    <form action="/login" method="POST">
-        <h2>Login</h2>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
+  <!-- Registration form -->
+  <h2>Register</h2>
+  <form action="/register" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div>
+      <label for="email">Email</label>
+      <input type="email" name="email" required />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input type="password" name="password" required />
+    </div>
+    <button type="submit">Register</button>
+  </form>
+
+  <!-- Login form -->
+  <h2>Login</h2>
+  <form action="/login" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div>
+      <label for="email">Email</label>
+      <input type="email" name="email" required />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input type="password" name="password" required />
+    </div>
+    <button type="submit">Login</button>
+  </form>
 </body>
 </html>
