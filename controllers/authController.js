@@ -1,102 +1,131 @@
-const bcrypt = require('bcrypt');
-const sgMail = require('@sendgrid/mail');
+const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const crypto = require('crypto');
+// For sending verification emails
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY || 'YOUR_SENDGRID_API_KEY');
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+exports.registerUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-module.exports = {
-  showHome: (req, res) => {
-    // Render the home page if guest
-    const title = 'Home';
-    return res.render('home', { title });
-  },
-
-  showDashboard: (req, res) => {
-    // Render the dashboard page if logged in
-    const title = 'Home';
-    return res.render('dashboard', { user: req.session.user , title });
-  },
-
-  registerUser: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Create user in DB
-      const user = await prisma.user.create({
-        data: {
-          email,
-          passwordHash: hashedPassword,
-          emailVerified: false
-        }
-      });
-
-      // Send verification email
-      const verificationURL = `http://localhost:3000/verify-email?email=${encodeURIComponent(user.email)}`;
-
-      const msg = {
-        to: user.email,
-        from: process.env.SENDGRID_SENDER_EMAIL,
-        subject: 'Verify your email',
-        text: `Please verify your email by visiting: ${verificationURL}`,
-        html: `<strong>Please verify by visiting: <a href="${verificationURL}">${verificationURL}</a></strong>`,
-      };
-
-      await sgMail.send(msg);
-
-      return res.redirect('/');
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/');
+    // Basic validation
+    if (!email || !password) {
+      return res.status(400).send('Missing email or password');
     }
-  },
 
-  verifyEmail: async (req, res) => {
-    try {
-      const { email } = req.query;
-      const user = await prisma.user.findUnique({ where: { email } });
-      if (user && !user.emailVerified) {
-        await prisma.user.update({
-          where: { email },
-          data: { emailVerified: true }
-        });
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).send('User already exists');
+    }
+
+    // Hash password
+    const hashedPass = await bcrypt.hash(password, 10);
+
+    // Generate a token for email verification
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
+    // Create user in DB
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPass,
+        verified: false,
+        verificationToken
       }
-    } catch (error) {
-      console.error(error);
-    }
+    });
+
+    // Send verification email
+    const msg = {
+      to: email,
+      from: process.env.SENDGRID_FROM_EMAIL || 'no-reply@example.com',
+      subject: 'Verify your account',
+      text: `Click the link to verify http://localhost:3000/auth/verify/${verificationToken}`,
+      html: `<p>Click <a href="http://localhost:3000/auth/verify/${verificationToken}">here</a> to verify your account.</p>`
+    };
+    await sgMail.send(msg);
+
+    // Once registered, you can either auto-login or redirect
     return res.redirect('/');
-  },
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Server error');
+  }
+};
 
-  loginUser: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const user = await prisma.user.findUnique({ where: { email } });
-      if (!user) return res.redirect('/');
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-      const match = await bcrypt.compare(password, user.passwordHash);
-      if (!match) return res.redirect('/');
-
-      // Check if email is verified
-      if (!user.emailVerified) {
-        // If not, ask user to verify
-        return res.send('Please verify your email before logging in.');
-      }
-
-      // Set user session
-      req.session.user = { id: user.id, email: user.email };
-      return res.redirect('/dashboard');
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/');
+    if (!email || !password) {
+      return res.status(400).send('Missing email or password');
     }
-  },
 
-  logoutUser: (req, res) => {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(400).send('Invalid credentials');
+    }
+
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).send('Invalid credentials');
+    }
+
+    // Check if verified
+    if (!user.verified) {
+      return res.status(403).send('Please verify your email first.');
+    }
+
+    // Store user ID in session
+    req.session.userId = user.id;
+
+    // Redirect to dashboard
+    return res.redirect('/dashboard');
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Server error');
+  }
+};
+
+exports.logoutUser = async (req, res) => {
+  try {
     req.session.destroy((err) => {
-      if (err) console.error(err);
+      if (err) {
+        console.error(err);
+      }
+      // Clear session cookie
       res.clearCookie('connect.sid');
       return res.redirect('/');
     });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Server error');
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const user = await prisma.user.findFirst({
+      where: { verificationToken: token }
+    });
+
+    if (!user) {
+      return res.status(400).send('Invalid verification token');
+    }
+
+    // Mark user as verified
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { verified: true, verificationToken: '' }
+    });
+
+    return res.send('Email verified! You can now login.');
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Server error');
   }
 };

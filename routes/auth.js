@@ -1,23 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    showHome, 
-    showDashboard, 
-    registerUser, 
-    loginUser, 
-    logoutUser, 
-    verifyEmail 
-} = require('../controllers/authController');
-const { ensureAuthenticated, ensureGuest } = require('../middlewares/auth');
+const { registerUser, loginUser, logoutUser, verifyEmail } = require('../controllers/authController');
 
-// Routes accessible without authentication
-router.get('/', ensureGuest, showHome);
-router.post('/register', ensureGuest, registerUser);
-router.post('/login', ensureGuest, loginUser);
-router.get('/verify-email', verifyEmail);
+// Registration
+router.post('/register', registerUser);
 
-// Routes accessible only if authenticated
-router.get('/dashboard', ensureAuthenticated, showDashboard);
-router.post('/logout', ensureAuthenticated, logoutUser);
+// Login
+router.post('/login', loginUser);
+
+// Logout
+router.post('/logout', logoutUser);
+
+// Email verification link: http://yourdomain.com/auth/verify/:token
+router.get('/verify/:token', verifyEmail);
 
 module.exports = router;

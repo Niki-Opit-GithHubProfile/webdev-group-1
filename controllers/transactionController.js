@@ -5,7 +5,12 @@ module.exports = {
   listTransactions: async (req, res) => {
     try {
       const transactions = await prisma.transaction.findMany({
-        where: { userId: req.session.user.id }
+        where: {
+          userId: req.session.user.id
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
       });
       return res.render('dashboard', {
         user: req.session.user,

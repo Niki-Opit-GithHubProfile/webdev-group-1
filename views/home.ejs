@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= title %></title>
-  <!-- You can include your Tailwind or other CSS here -->
+  <title>Home - Crypto Tracker</title>
+  <!-- Tailwind or other CSS references here -->
 </head>
 <body>
   <h1>Welcome to Crypto Tracker</h1>
 
   <!-- Registration form -->
-  <h2>Register</h2>
-  <form action="/register" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
+  <form action="/auth/register" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
     <div>
       <label for="email">Email</label>
       <input type="email" name="email" required />
@@ -24,10 +22,8 @@
   </form>
 
   <!-- Login form -->
-  <h2>Login</h2>
-  <form action="/login" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
+  <form action="/auth/login" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
     <div>
       <label for="email">Email</label>
       <input type="email" name="email" required />
