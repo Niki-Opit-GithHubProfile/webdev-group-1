@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <title>CoinRates</title>
+  <style>
+    .custom-container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 1rem;
+    }
+    /* Styles for the Account button dropdown */
+    .dropdown-menu {
+      position: absolute;
+      right: 0;
+      margin-top: 0.5rem;
+      background: #fff;
+      color: #000;
+      border-radius: 0.375rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 10;
+      min-width: 150px;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+    }
+    .dropdown-menu a:hover {
+      background-color: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="bg-[#0B0E14] text-white">
+  <!-- NAVIGATION -->
+  <nav class="bg-[#131A24] relative">
+    <div class="custom-container">
+      <div class="flex h-16 items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <img src="./assets/logo.png" alt="Logo" class="w-10 h-10 rounded-full" />
+        </div>
+        <!-- Desktop Navigation Links -->
+        <div class="hidden sm:flex flex-1 justify-center space-x-4">
+          <!-- "My Dashboard" button without fixed href; redirection handled via JS -->
+          <a id="dashboard-btn" href="#" class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
+            <i data-lucide="bar-chart" class="w-5 h-5"></i>
+            <span>My Dashboard</span>
+          </a>
+          <a href="dashboard-2.html" class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
+            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+            <span>Quick Convert</span>
+          </a>
+        </div>
+        <!-- Profile & Account Dropdown -->
+        <div class="flex items-center space-x-4 relative">
+          <!-- Profile Icon (could be clickable for additional options) -->
+          <button type="button" class="relative flex rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
+            <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full" />
+          </button>
+          <!-- Account button to display dropdown with Sign In / Log In -->
+          <button id="account-btn" type="button" class="relative flex rounded-md px-4 py-2 bg-gray-700 hover:bg-gray-600 transition">
+            Account
+          </button>
+          <!-- Initially hidden dropdown -->
+          <div id="account-dropdown" class="dropdown-menu hidden">
+            <!-- If "Log In" is clicked, the form opens with Log In mode by default -->
+            <a href="signInForm.html?mode=login">Log In</a>
+            <!-- If "Sign Up" is clicked, the form opens with Sign Up mode by default -->
+            <a href="signInForm.html?mode=signup">Sign Up</a>
+          </div>
+        </div>
+        <!-- Mobile Menu Button -->
+        <button type="button" id="menu-toggle" aria-expanded="false" class="sm:hidden relative p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="sm:hidden hidden" id="mobile-menu">
+      <div class="space-y-2 px-4 pt-4 pb-3">
+        <a id="dashboard-btn-mobile" href="#" class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
+          <i data-lucide="bar-chart" class="w-5 h-5"></i>
+          <span>My Dashboard</span>
+        </a>
+        <!-- Other mobile links -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <div class="custom-container">
+    <!-- HERO: Static section -->
+    <section class="pt-16 pb-10">
+      <div class="flex flex-col lg:flex-row items-center justify-between">
+        <div class="lg:w-1/2 text-center lg:text-left">
+          <h1 class="text-5xl lg:text-6xl font-bold leading-tight">
+            Trade Smarter,<br />Not Harder
+          </h1>
+          <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
+            No more complicated graphs. No more endless calculations.
+            Just a simple, powerful tool to analyze, convert, and grow your crypto portfolio effortlessly.
+          </p>
+          <button class="mt-6 bg-blue-600 hover:bg-blue-700 transition px-6 py-3 rounded-md text-lg font-semibold">
+            Get Started →
+          </button>
+        </div>
+        <div class="lg:w-1/2 flex justify-center">
+          <img src="./assets/asset1.jpg" alt="Trading on a tablet" class="rounded-lg shadow-xl w-full max-w-md" />
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES: Functional carousel -->
+    <section class="py-16 relative">
+      <div class="overflow-hidden relative"> 
+        <!-- Carousel container: each slide occupies 100% of the width -->
+        <div id="features-carousel" class="flex transition-transform duration-500">
+          <!-- Slide 1: Trading Made Easy -->
+          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between">
+            <div class="lg:w-1/2 mt-8 lg:mt-0 flex justify-center">
+              <img src="./assets/asset4.jpg" alt="Crypto charts" class="rounded-lg shadow-xl w-full max-w-md" />
+            </div>
+            <div class="lg:w-1/2 text-center lg:text-left">
+              <h2 class="text-4xl lg:text-5xl font-bold">Trading Made Easy</h2>
+              <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
+                Clear charts, precise data, and a user-friendly interface designed to help you analyze your portfolio effortlessly.
+              </p>
+              <!-- Modified Personal Dashboard button -->
+              <button id="personal-dashboard-btn" class="mt-6 bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+                Personal Dashboard →
+              </button>
+            </div>
+          </div>
+          <!-- Slide 2: Feature Two -->
+          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between">
+            <div class="lg:w-1/2 mt-8 lg:mt-0 flex justify-center">
+              <img src="./assets/asset5.jpg" alt="Feature Two" class="rounded-lg shadow-xl w-full max-w-md" />
+            </div>
+            <div class="lg:w-1/2 text-center lg:text-left">
+              <h2 class="text-4xl lg:text-5xl font-bold">Feature Two</h2>
+              <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
+                Description for feature two goes here. Explain how it benefits the user.
+              </p>
+              <button class="mt-6 bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+                Learn More →
+              </button>
+            </div>
+          </div>
+          <!-- Slide 3: Feature Three -->
+          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between">
+            <div class="lg:w-1/2 mt-8 lg:mt-0 flex justify-center">
+              <img src="./assets/asset6.jpg" alt="Feature Three" class="rounded-lg shadow-xl w-full max-w-md" />
+            </div>
+            <div class="lg:w-1/2 text-center lg:text-left">
+              <h2 class="text-4xl lg:text-5xl font-bold">Feature Three</h2>
+              <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
+                Description for feature three goes here. More details about this feature.
+              </p>
+              <button class="mt-6 bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+                Discover More →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Dots for changing slides in the Features Carousel -->
+      <div class="flex justify-center mt-4" id="features-dots">
+        <span data-index="0" class="dot w-3 h-3 rounded-full bg-blue-500 cursor-pointer mx-1"></span>
+        <span data-index="1" class="dot w-3 h-3 rounded-full bg-gray-500 cursor-pointer mx-1"></span>
+        <span data-index="2" class="dot w-3 h-3 rounded-full bg-gray-500 cursor-pointer mx-1"></span>
+      </div>
+    </section>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // Mobile Menu Toggle
+      const menuButton = document.getElementById('menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      menuButton.addEventListener('click', function () {
+        const expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !expanded);
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Simulated authentication state.
+      // In a real project, verify a token or call an API.
+      const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+
+      // Logic for "My Dashboard" button (desktop)
+      const dashboardBtn = document.getElementById("dashboard-btn");
+      dashboardBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        if (isLoggedIn) {
+          window.location.href = "dashboard.html";
+        } else {
+          window.location.href = "signInForm.html?mode=login";
+        }
+      });
+
+      // Logic for "My Dashboard" button (mobile)
+      const dashboardBtnMobile = document.getElementById("dashboard-btn-mobile");
+      if(dashboardBtnMobile) {
+        dashboardBtnMobile.addEventListener("click", function(e) {
+          e.preventDefault();
+          if (isLoggedIn) {
+            window.location.href = "dashboard.html";
+          } else {
+            window.location.href = "signInForm.html?mode=login";
+          }
+        });
+      }
+
+      // Logic for "Personal Dashboard" button in the first slide of Features
+      const personalDashboardBtn = document.getElementById("personal-dashboard-btn");
+      personalDashboardBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        if (isLoggedIn) {
+          window.location.href = "dashboard.html";
+        } else {
+          window.location.href = "signInForm.html?mode=login";
+        }
+      });
+
+      // Logic for the Account button dropdown
+      const accountBtn = document.getElementById("account-btn");
+      const accountDropdown = document.getElementById("account-dropdown");
+      accountBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        accountDropdown.classList.toggle("hidden");
+      });
+      // Close the dropdown when clicking outside
+      document.addEventListener("click", function(e) {
+        if (!accountDropdown.contains(e.target)) {
+          accountDropdown.classList.add("hidden");
+        }
+      });
+
+      // FEATURES CAROUSEL
+      const featuresCarousel = document.getElementById('features-carousel');
+      const featureDots = document.querySelectorAll('#features-dots .dot');
+      let featureIndex = 0;
+      const totalFeatures = featuresCarousel.children.length;
+      
+      function updateFeatureDots() {
+        featureDots.forEach((dot, idx) => {
+          if(idx === featureIndex) {
+            dot.classList.remove('bg-gray-500');
+            dot.classList.add('bg-blue-500');
+          } else {
+            dot.classList.remove('bg-blue-500');
+            dot.classList.add('bg-gray-500');
+          }
+        });
+      }
+
+      featureDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          featureIndex = parseInt(dot.getAttribute('data-index'));
+          featuresCarousel.style.transform = `translateX(-${featureIndex * 100}%)`;
+          updateFeatureDots();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
