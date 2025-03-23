@@ -14,31 +14,76 @@
       margin: auto;
       padding: 0 1rem;
     }
-    /* Styles for the Account button dropdown */
+    /* Improved Dropdown Styles for Account */
     .dropdown-menu {
       position: absolute;
+      top: 100%;
       right: 0;
-      margin-top: 0.5rem;
-      background: #fff;
-      color: #000;
+      margin-top: 0.75rem;
+      background: #1C2530;
+      color: white;
       border-radius: 0.375rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      z-index: 10;
-      min-width: 150px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 50;
+      min-width: 160px;
+      display: none;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
     .dropdown-menu a {
       display: block;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1rem;
       text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
     }
     .dropdown-menu a:hover {
-      background-color: #f3f4f6;
+      background-color: #2A3340;
+    }
+    .dropdown-menu.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Slider Arrows Styles */
+    .slider-arrow {
+      background: rgba(55, 65, 81, 0.8);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 9999px;
+      z-index: 20;
+      transition: background 0.2s ease;
+    }
+    .slider-arrow:hover {
+      background: rgba(55, 65, 81, 1);
+    }
+    /* Arrow positioning */
+    #prev-btn {
+      left: 2rem;
+    }
+    #next-btn {
+      right: 2rem;
+    }
+    /* Media query to reposition arrows on small screens */
+    @media (max-width: 640px) {
+      #prev-btn,
+      #next-btn {
+        top: 30%;
+      }
+    }
+    /* Default arrow vertical position on larger screens */
+    @media (min-width: 641px) {
+      #prev-btn,
+      #next-btn {
+        top: 50%;
+      }
     }
   </style>
 </head>
 <body class="bg-[#0B0E14] text-white">
-  <!-- NAVIGATION -->
-  <nav class="bg-[#131A24] relative">
+  <!-- NAVIGATION BAR with Glassmorphism effect -->
+  <nav class="bg-[#131A24] bg-opacity-80 backdrop-blur-md border-b border-gray-700 relative fixed w-full z-50">
     <div class="custom-container">
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
@@ -47,31 +92,25 @@
         </div>
         <!-- Desktop Navigation Links -->
         <div class="hidden sm:flex flex-1 justify-center space-x-4">
-          <!-- "My Dashboard" button without fixed href; redirection handled via JS -->
           <a id="dashboard-btn" href="#" class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="bar-chart" class="w-5 h-5"></i>
             <span>My Dashboard</span>
           </a>
-          <a href="dashboard-2.html" class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
+          <a href="#" class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
             <span>Quick Convert</span>
           </a>
         </div>
         <!-- Profile & Account Dropdown -->
         <div class="flex items-center space-x-4 relative">
-          <!-- Profile Icon (could be clickable for additional options) -->
           <button type="button" class="relative flex rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
             <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full" />
           </button>
-          <!-- Account button to display dropdown with Sign In / Log In -->
           <button id="account-btn" type="button" class="relative flex rounded-md px-4 py-2 bg-gray-700 hover:bg-gray-600 transition">
             Account
           </button>
-          <!-- Initially hidden dropdown -->
-          <div id="account-dropdown" class="dropdown-menu hidden">
-            <!-- If "Log In" is clicked, the form opens with Log In mode by default -->
+          <div id="account-dropdown" class="dropdown-menu">
             <a href="signInForm.html?mode=login">Log In</a>
-            <!-- If "Sign Up" is clicked, the form opens with Sign Up mode by default -->
             <a href="signInForm.html?mode=signup">Sign Up</a>
           </div>
         </div>
@@ -88,92 +127,100 @@
           <i data-lucide="bar-chart" class="w-5 h-5"></i>
           <span>My Dashboard</span>
         </a>
-        <!-- Other mobile links -->
       </div>
     </div>
   </nav>
 
-  <!-- MAIN CONTAINER -->
-  <div class="custom-container">
+  <!-- MAIN CONTAINER (starts after fixed navbar) -->
+  <div class="custom-container pt-24">
     <!-- HERO: Static section -->
     <section class="pt-16 pb-10">
       <div class="flex flex-col lg:flex-row items-center justify-between">
         <div class="lg:w-1/2 text-center lg:text-left">
-          <h1 class="text-5xl lg:text-6xl font-bold leading-tight">
+          <h1 class="text-5xl lg:text-6xl font-bold leading-tight drop-shadow-lg">
             Trade Smarter,<br />Not Harder
           </h1>
           <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
             No more complicated graphs. No more endless calculations.
             Just a simple, powerful tool to analyze, convert, and grow your crypto portfolio effortlessly.
           </p>
-          <button class="mt-6 bg-blue-600 hover:bg-blue-700 transition px-6 py-3 rounded-md text-lg font-semibold">
+          <button id="get-started-btn" class="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition px-6 py-3 rounded-md text-lg font-semibold shadow-lg">
             Get Started →
           </button>
         </div>
-        <div class="lg:w-1/2 flex justify-center">
+        <div class="lg:w-1/2 flex justify-center mt-8 lg:mt-0">
           <img src="./assets/asset1.jpg" alt="Trading on a tablet" class="rounded-lg shadow-xl w-full max-w-md" />
         </div>
       </div>
     </section>
 
-    <!-- FEATURES: Functional carousel -->
+    <!-- FEATURES: Functional carousel with navigation arrows and improved dots -->
     <section class="py-16 relative">
-      <div class="overflow-hidden relative"> 
+      <!-- Container without horizontal padding to completely hide overflow.
+           Added pt-12 and pb-12 to separate content from the arrow buttons -->
+      <div class="overflow-hidden relative pt-12 pb-12">
         <!-- Carousel container: each slide occupies 100% of the width -->
+        <!-- Added responsive horizontal padding to narrow the content and avoid overlap -->
         <div id="features-carousel" class="flex transition-transform duration-500">
           <!-- Slide 1: Trading Made Easy -->
-          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between">
-            <div class="lg:w-1/2 mt-8 lg:mt-0 flex justify-center">
+          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
+            <div class="lg:w-1/2 flex justify-center">
               <img src="./assets/asset4.jpg" alt="Crypto charts" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
-            <div class="lg:w-1/2 text-center lg:text-left">
-              <h2 class="text-4xl lg:text-5xl font-bold">Trading Made Easy</h2>
-              <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
+            <div class="lg:w-1/2 text-center lg:text-left px-4">
+              <h2 class="text-4xl lg:text-5xl font-bold mb-4">Trading Made Easy</h2>
+              <p class="text-gray-300 mb-6 text-justify">
                 Clear charts, precise data, and a user-friendly interface designed to help you analyze your portfolio effortlessly.
               </p>
-              <!-- Modified Personal Dashboard button -->
-              <button id="personal-dashboard-btn" class="mt-6 bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+              <button id="personal-dashboard-btn" class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
                 Personal Dashboard →
               </button>
             </div>
           </div>
-          <!-- Slide 2: Feature Two -->
-          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between">
-            <div class="lg:w-1/2 mt-8 lg:mt-0 flex justify-center">
+          <!-- Slide 2: Make Data-Driven Decisions -->
+          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
+            <div class="lg:w-1/2 flex justify-center">
               <img src="./assets/asset5.jpg" alt="Feature Two" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
-            <div class="lg:w-1/2 text-center lg:text-left">
-              <h2 class="text-4xl lg:text-5xl font-bold">Feature Two</h2>
-              <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
-                Description for feature two goes here. Explain how it benefits the user.
+            <div class="lg:w-1/2 text-center lg:text-left px-4">
+              <h2 class="text-4xl lg:text-5xl font-bold mb-4">Make Data-Driven Decisions</h2>
+              <p class="text-gray-300 mb-6 text-justify">
+                Access real-time performance insights, trends, and analytics to optimize your investments with confidence.
               </p>
-              <button class="mt-6 bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+              <button class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
                 Learn More →
               </button>
             </div>
           </div>
-          <!-- Slide 3: Feature Three -->
-          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between">
-            <div class="lg:w-1/2 mt-8 lg:mt-0 flex justify-center">
+          <!-- Slide 3: Swap in Seconds -->
+          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
+            <div class="lg:w-1/2 flex justify-center">
               <img src="./assets/asset6.jpg" alt="Feature Three" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
-            <div class="lg:w-1/2 text-center lg:text-left">
-              <h2 class="text-4xl lg:text-5xl font-bold">Feature Three</h2>
-              <p class="mt-4 text-gray-300 max-w-xl mx-auto lg:mx-0">
-                Description for feature three goes here. More details about this feature.
+            <div class="lg:w-1/2 text-center lg:text-left px-4">
+              <h2 class="text-4xl lg:text-5xl font-bold mb-4">Swap in Seconds</h2>
+              <p class="text-gray-300 mb-6 text-justify">
+                Easily exchange cryptocurrencies with our fast and seamless conversion tool.
               </p>
-              <button class="mt-6 bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
-                Discover More →
+              <button class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+                Convert Now →
               </button>
             </div>
           </div>
         </div>
+        <!-- Navigation Arrows for Slider, positioned outside the content container --> 
+        <button id="prev-btn" class="slider-arrow absolute left-2 transform -translate-y-1/2">
+          <i data-lucide="chevron-left" class="w-6 h-6"></i>
+        </button>
+        <button id="next-btn" class="slider-arrow absolute right-2 transform -translate-y-1/2">
+          <i data-lucide="chevron-right" class="w-6 h-6"></i>
+        </button>
       </div>
-      <!-- Dots for changing slides in the Features Carousel -->
-      <div class="flex justify-center mt-4" id="features-dots">
-        <span data-index="0" class="dot w-3 h-3 rounded-full bg-blue-500 cursor-pointer mx-1"></span>
-        <span data-index="1" class="dot w-3 h-3 rounded-full bg-gray-500 cursor-pointer mx-1"></span>
-        <span data-index="2" class="dot w-3 h-3 rounded-full bg-gray-500 cursor-pointer mx-1"></span>
+      <!-- Improved Dots Navigation positioned further down --> 
+      <div id="features-dots" class="flex justify-center mt-10">
+        <button data-index="0" class="dot w-4 h-4 rounded-full bg-blue-500 focus:outline-none"></button>
+        <button data-index="1" class="dot w-4 h-4 rounded-full bg-gray-500 focus:outline-none"></button>
+        <button data-index="2" class="dot w-4 h-4 rounded-full bg-gray-500 focus:outline-none"></button>
       </div>
     </section>
   </div>
@@ -193,8 +240,7 @@
         mobileMenu.classList.toggle('hidden');
       });
 
-      // Simulated authentication state.
-      // In a real project, verify a token or call an API.
+      // Simulated authentication state (in real project, use token/API)
       const isLoggedIn = localStorage.getItem("loggedIn") === "true";
 
       // Logic for "My Dashboard" button (desktop)
@@ -232,17 +278,28 @@
         }
       });
 
+      // Logic for "Get Started" button in Hero section
+      const getStartedBtn = document.getElementById("get-started-btn");
+      getStartedBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        if (isLoggedIn) {
+          window.location.href = "dashboard.html";
+        } else {
+          window.location.href = "signInForm.html?mode=login";
+        }
+      });
+
       // Logic for the Account button dropdown
       const accountBtn = document.getElementById("account-btn");
       const accountDropdown = document.getElementById("account-dropdown");
       accountBtn.addEventListener("click", function(e) {
         e.stopPropagation();
-        accountDropdown.classList.toggle("hidden");
+        accountDropdown.classList.toggle("show");
       });
       // Close the dropdown when clicking outside
       document.addEventListener("click", function(e) {
-        if (!accountDropdown.contains(e.target)) {
-          accountDropdown.classList.add("hidden");
+        if (!accountBtn.contains(e.target) && !accountDropdown.contains(e.target)) {
+          accountDropdown.classList.remove("show");
         }
       });
 
@@ -263,13 +320,27 @@
           }
         });
       }
-
+      
       featureDots.forEach(dot => {
         dot.addEventListener('click', () => {
           featureIndex = parseInt(dot.getAttribute('data-index'));
           featuresCarousel.style.transform = `translateX(-${featureIndex * 100}%)`;
           updateFeatureDots();
         });
+      });
+
+      // Navigation Arrows for Slider
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      prevBtn.addEventListener('click', function() {
+        featureIndex = (featureIndex - 1 + totalFeatures) % totalFeatures;
+        featuresCarousel.style.transform = `translateX(-${featureIndex * 100}%)`;
+        updateFeatureDots();
+      });
+      nextBtn.addEventListener('click', function() {
+        featureIndex = (featureIndex + 1) % totalFeatures;
+        featuresCarousel.style.transform = `translateX(-${featureIndex * 100}%)`;
+        updateFeatureDots();
       });
     });
   </script>
