@@ -1,152 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoinRates - Dashboard</title>
+    <title>Crypto Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
-<body>
-     <!-- NAVBAR -->
-    <nav>
-        <div class="logo">
-            <!-- Logo and brand name-->
-            <img src="" alt="CoinRates Logo">
-            <p>CoinRates</p>
+
+<body class="bg-gray-900 text-white">
+    <nav class="bg-gray-800">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <img src="./assets/logo.png" alt="Logo" class="w-10 h-10 rounded-full">
+                </div>
+
+                <!-- Centered Navigation Links -->
+                <div class="hidden sm:flex flex-1 justify-center space-x-4">
+                    <a href="#"
+                        class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                        <i data-lucide="bar-chart" class="w-5 h-5"></i>
+                        <span>My Dashboard</span>
+                    </a>
+                    <a href="#"
+                        class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                        <span>Quick Convert</span>
+                    </a>
+                </div>
+
+                <!-- Profile Icon -->
+                <div class="flex items-center space-x-4">
+                    <button type="button"
+                        class="relative flex rounded-full bg-gray-800 p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
+                        <!-- Use a valid image source or a placeholder -->
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button type="button" id="menu-toggle" aria-expanded="false"
+                        class="sm:hidden relative p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <ul class="menu">
-            <!-- Menu options -->
-            <li class="menu-my-dashboard">
-              <!-- Dashboard option -->
-              <img src="" alt="Dashboard">
-              <p>My Dashboard</p>
-            </li>
-            <li class="menu-convert">
-              <!-- Convert tool option -->
-              <img src="" alt="Convert tool">
-              <p>Quick Convert</p>
-            </li>
-          </ul>      
-
-        <div class="account"> 
-            <!-- Account section -->
-            <div>
-                <p>My Account</p>
-                <img src="" alt="Account">
+        <!-- Mobile Menu -->
+        <div class="sm:hidden hidden" id="mobile-menu">
+            <div class="space-y-2 px-4 pt-4 pb-3">
+                <a href="#"
+                    class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
+                    <i data-lucide="bar-chart" class="w-5 h-5"></i>
+                    <span>My Dashboard</span>
+                </a>
+                <a href="#"
+                    class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    <span>Quick Convert</span>
+                </a>
+                <a href="#"
+                    class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                    <span>Account</span>
+                </a>
             </div>
         </div>
     </nav>
+    <div class="flex h-screen">
+        <!-- Left Sidebar -->
+        <div class="w-1/6 bg-gray-800 p-6 border-r border-gray-700 rounded-lg mt-6 mx-6">
 
-<!-- MAIN CONTENT: 3 columns layout -->
-    <main class="dashboard-main">
-    
-        <!-- 1) Left Column: Asset List (cryptos) -->
-        <section class="left-column">
-            
-            <h2>Assets Overview</h2>
-            
-            <!-- List of user's assets -->
-            <ul id="cryptoList" class="crypto-list">
-                <!-- Example of a single crypto item -->
-                <li class="crypto-item"> <!-- Repeat for every crypto asset -->
-                    <img src="" alt="BTC Icon" />
-                    <div class="crypto-details">
-                    <p class="crypto-symbol">BTC</p>
-                    <p class="crypto-amount">0.85 BTC</p>
-                    <p class="crypto-value">$20,400</p>
-                    <!-- Performance tag (green/red) -->
-                    <span class="performance-tag positive">+5.2%</span>
-                    </div> 
-                </li>
-                
-            </ul>
-        </section>
+            <h1 class="text-2xl font-bold">CoinRates</h1>
+            <div class="mt-6 space-y-4 text-lg">
+                <div class="flex items-center justify-between">
+                    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" class="w-6 h-6">
+                    <span>BTC: <span id="btc-price">$12,000</span></span>
+                    <span class="text-green-400">+22.31%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH" class="w-6 h-6">
+                    <span>ETH: <span id="eth-price">$6,000</span></span>
+                    <span class="text-green-400">+15.42%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <img src="https://cryptologos.cc/logos/xrp-xrp-logo.png" alt="XRP" class="w-6 h-6">
+                    <span>XRP: <span id="xrp-price">$2,500</span></span>
+                    <span class="text-red-400">-3.12%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <img src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL" class="w-6 h-6">
+                    <span>SOL: <span id="sol-price">$1,500</span></span>
+                    <span class="text-green-400">+9.87%</span>
+                </div>
+            </div>
 
-        <!-- 2) Center Column: Portfolio Summary & Charts -->
-        <section class="center-column">
-            
-            <div class="top-row">
 
-             <!-- Portfolio Value Section -->
-                <div class="portfolio-summary">
-                    <h2>Portfolio</h2>
-                    <!-- Currency selection (BTC, ETH, USDT, ADA, etc.) -->
-                    <label for="base-currency">Base Currency:</label>
-                    <select id="base-currency" name="base-currency">
-                        <option value="btc">BTC</option>
-                        <option value="eth">ETH</option>
-                        <option value="usdt">USDT</option>
-                    </select>
+        </div>
 
-                    <!-- Show total portfolio value in chosen currency + USD equivalent -->
-                    <p>Total Value: <span>0.35 BTC</span> (~ $8,400)</p>
-                    <!-- 24h change + sparkline chart -->
-                    <div class="portfolio-performance">
-                        <span class="positive">+3.2%</span>
-                        <img src="" alt="24h Sparkline Chart">
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-semibold">Portfolio Overview</h2>
+                        <p class="text-gray-400 text-lg">
+                            Total Value:
+                            <span id="converted-value" class="text-white font-bold">$9,200.98</span>
+                        </p>
+                        <p class="text-gray-400 text-lg">
+                            Equivalent in:
+                            <select id="crypto-selector" class="bg-gray-800 text-white px-2 py-1 rounded">
+                                <option value="usd">USD</option>
+                                <option value="btc">Bitcoin (BTC)</option>
+                                <option value="eth">Ethereum (ETH)</option>
+                                <option value="xrp">XRP</option>
+                                <option value="sol">Solana (SOL)</option>
+                                <option value="bnb">Binance Coin (BNB)</option>
+                                <option value="ada">Cardano (ADA)</option>
+                                <option value="doge">Dogecoin (DOGE)</option>
+                            </select>
+                        </p>
                     </div>
                 </div>
 
-                <!-- Pie Chart: Illustrates asset distribution -->
-                <div class="pie-chart">
-                    <div class="pie-chart-container" id="portfolioPieChart">
-                        <!-- pie chart -->
-                    </div>
+                <!-- Pie Chart -->
+                <div class="w-full md:w-1/2 lg:w-1/3 bg-gray-800 p-4 rounded-lg">
+                    <canvas id="portfolioChart"></canvas>
                 </div>
-
-                <!-- Add transaction button -->
-                <div class="add-transaction">
-                    <button id="addTransactionBtn">Add Transaction</button>
-                </div>
-
+                <button class="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600">Add Transaction</button>
             </div>
 
-            <!-- Bottom row: Detailed line chart for portfolio movement -->
-            <div class="bottom-row">
-                <div class="line-chart-container" id="portfolioLineChartContainer">
-                <!-- grafic/chart of the portafolio performance -->
+            <div class="mt-4">
+                <!-- Timeframe Buttons -->
+                <div class="mb-4 space-x-2">
+                    <button class="bg-gray-700 px-3 py-1 rounded" onclick="updateChart('1d')">1D</button>
+                    <button class="bg-gray-700 px-3 py-1 rounded" onclick="updateChart('7d')">1W</button>
+                    <button class="bg-gray-700 px-3 py-1 rounded" onclick="updateChart('30d')">1M</button>
+                    <button class="bg-gray-700 px-3 py-1 rounded" onclick="updateChart('180d')">6M</button>
+                    <button class="bg-gray-700 px-3 py-1 rounded" onclick="updateChart('1y')">1Y</button>
+                    <button class="bg-gray-700 px-3 py-1 rounded" onclick="updateChart('1825d')">5Y</button>
+                </div>
+                <!-- Chart Section -->
+                <div class="p-4 bg-gray-800 rounded-lg">
+                    <canvas id="cryptoChart"></canvas>
                 </div>
             </div>
-        </section>
-        
-        <!-- 3) Right Column: Transaction History Table -->
-        <section class="right-column">
-            <h2>Transaction History</h2>
-            <table class="transactions-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Pair</th>
-                        <th>Type</th>
-                        <th>Price</th>
-                        <th>Amount</th>
-                        <th>Total</th>
-                        <th>Current Price</th>
-                        <th>P/L(%)</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="transactionTableBody">
-                    <!-- Example transaction row -->
-                    <tr>
-                        <td>2025-03-01</td>
-                        <td>BTC/USDT</td>
-                        <td>Sell</td>
-                        <td>$24,000</td>
-                        <td>0.1 BTC</td>
-                        <td>$2,400</td>
-                        <td>$25,000</td>
-                        <td>+16.4 %</td>
-                         <!-- Delete and modify transactions -->
-                        <td class="actions">
-                            <button class="modify-btn">Modify</button>
-                            <button class="delete-btn">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    
-    </main>
+        </div>
+
+        <!-- Right Sidebar-->
+        <div class="mt-6 p-4 bg-gray-800 rounded-lg mt-6 mx-6">
+            <h3 class="text-lg font-semibold mb-3">Transaction History</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-300 border border-gray-700">
+                    <thead class="bg-gray-700 text-gray-200">
+                        <tr>
+                            <th class="px-4 py-2 border border-gray-600">Date</th>
+                            <th class="px-4 py-2 border border-gray-600">Pair</th>
+                            <th class="px-4 py-2 border border-gray-600">Type</th>
+                            <th class="px-4 py-2 border border-gray-600">Price</th>
+                            <th class="px-4 py-2 border border-gray-600">Amount</th>
+                            <th class="px-4 py-2 border border-gray-600">Total</th>
+                            <th class="px-4 py-2 border border-gray-600">Current Price</th>
+                            <th class="px-4 py-2 border border-gray-600">P/L (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTable">
+                        <!-- Transactions will be inserted dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const ctx = document.getElementById('cryptoChart').getContext('2d');
+        let cryptoChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: []
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { display: true },
+                    y: { display: true }
+                }
+            }
+        });
+
+        async function fetchCryptoPrices() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,ripple,solana&vs_currencies=usd');
+                const data = await response.json();
+                document.getElementById('btc-price').innerText = `$${data.bitcoin.usd}`;
+                document.getElementById('eth-price').innerText = `$${data.ethereum.usd}`;
+                document.getElementById('xrp-price').innerText = `$${data.ripple.usd}`;
+                document.getElementById('sol-price').innerText = `$${data.solana.usd}`;
+            } catch (error) {
+                console.error('Error fetching crypto prices:', error);
+            }
+        }
+
+        async function updateChart(timeframe) {
+            try {
+                const response = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${timeframe}`);
+                const data = await response.json();
+
+                const labels = data.prices.map(entry => new Date(entry[0]).toLocaleDateString());
+                const prices = data.prices.map(entry => entry[1]);
+
+                cryptoChart.data.labels = labels;
+                cryptoChart.data.datasets = [{
+                    label: 'BTC Price',
+                    data: prices,
+                    borderColor: 'rgb(255, 165, 0)',
+                    fill: false
+                }];
+                cryptoChart.update();
+            } catch (error) {
+                console.error('Error fetching market data:', error);
+            }
+        }
+
+        setInterval(fetchCryptoPrices, 5000);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCryptoPrices();
+            updateChart('1d');
+        });
+
+        const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
+        const portfolioChart = new Chart(portfolioCtx, {
+            type: 'pie',
+            data: {
+                labels: ['BTC', 'ETH', 'XRP', 'SOL'],
+                datasets: [{
+                    data: [35, 25, 20, 20], // Example data, replace with real portfolio
+                    backgroundColor: ['#f7931a', '#3c3c3d', '#346aa9', '#9933cc']
+                }]
+            }
+        });
+
+        // Example transaction data
+        const transactions = [
+            { date: "12/02/2025", pair: "ETH/BTC", type: "Sell", price: "0.03 BTC", amount: "0.1 ETH", total: "0.003 BTC", current: "0.035", pl: "+16.67%" },
+            { date: "12/02/2025", pair: "ETH/BTC", type: "Buy", price: "0.03 BTC", amount: "0.1 ETH", total: "0.003 BTC", current: "0.035", pl: "+16.67%" }
+        ];
+
+        function populateTransactions() {
+            const table = document.getElementById("transactionTable");
+            transactions.forEach(tx => {
+                let row = `<tr class="border border-gray-700">
+                    <td class="px-4 py-2 border border-gray-600">${tx.date}</td>
+                    <td class="px-4 py-2 border border-gray-600">${tx.pair}</td>
+                    <td class="px-4 py-2 border border-gray-600">${tx.type}</td>
+                    <td class="px-4 py-2 border border-gray-600">${tx.price}</td>
+                    <td class="px-4 py-2 border border-gray-600">${tx.amount}</td>
+                    <td class="px-4 py-2 border border-gray-600">${tx.total}</td>
+                    <td class="px-4 py-2 border border-gray-600">${tx.current}</td>
+                    <td class="px-4 py-2 border border-gray-600">${tx.pl}</td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+        }
+
+        // Populate transactions on page load
+        document.addEventListener("DOMContentLoaded", populateTransactions);
+
+        // Initialize Lucide Icons
+        document.addEventListener("DOMContentLoaded", function () {
+            lucide.createIcons();
+        });
+
+        // Dropdown Menu
+        document.getElementById('crypto-selector').addEventListener('change', async function () {
+            const selectedCrypto = this.value;
+            const totalUsdValue = 9200.98; // Example total portfolio value in USD
+
+            if (selectedCrypto === 'usd') {
+                document.getElementById('converted-value').innerText = `$${totalUsdValue.toFixed(2)}`;
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${selectedCrypto}&vs_currencies=usd`);
+                const data = await response.json();
+                const conversionRate = data[selectedCrypto]?.usd;
+
+                if (conversionRate) {
+                    const convertedValue = totalUsdValue / conversionRate;
+                    document.getElementById('converted-value').innerText = `${convertedValue.toFixed(6)} ${selectedCrypto.toUpperCase()}`;
+                } else {
+                    document.getElementById('converted-value').innerText = "Conversion Error";
+                }
+            } catch (error) {
+                document.getElementById('converted-value').innerText = "API Error";
+            }
+        });
+
+    </script>
 </body>
+
 </html>
