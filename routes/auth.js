@@ -1,6 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, logoutUser, verifyEmail } = require('../controllers/authController');
+const { 
+  getForms, registerUser, loginUser, logoutUser, verifyEmail,
+  getLoginForm, getSignupForm 
+} = require('../controllers/authController');
+
+// Legacy route (for backward compatibility)
+router.get('/authForms', getForms);
+
+// Auth Forms Routes
+router.get('/login', getLoginForm);
+router.get('/signup', getSignupForm);
 
 // Registration
 router.post('/register', registerUser);
@@ -9,9 +19,9 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 
 // Logout
-router.post('/logout', logoutUser);
+router.get('/logout', logoutUser);
 
-// Email verification link: http://yourdomain.com/auth/verify/:token
+// Email verification
 router.get('/verify/:token', verifyEmail);
 
 module.exports = router;

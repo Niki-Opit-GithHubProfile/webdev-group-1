@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In | MoneyTrail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-200 flex items-center justify-center min-h-screen">
+  <div class="bg-white text-gray-800 rounded-lg shadow-md w-full max-w-md p-6 relative">
+    
+    <%- include('../components/authHeader', {subtitle: 'Log in to your account'}) %>
+    
+    <%- include('../components/socialAuth') %>
+    
+    <%- include('../components/errorMessage') %>
+
+    <form action="/auth/login" method="POST" id="loginForm" class="flex flex-col space-y-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div>
+        <label for="email" class="text-sm text-gray-700">Email</label>
+        <input
+          name="email"
+          type="email"
+          id="email"
+          placeholder="email@example.com"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          required
+        />
+      </div>
+      <div>
+        <label for="password" class="text-sm text-gray-700">Password</label>
+        <input
+          name="password"
+          type="password"
+          id="password"
+          placeholder="********"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
+      >
+        Log In
+      </button>
+    </form>
+    <p class="mt-4 text-center text-sm">
+      Don't have an account?
+      <a href="/auth/signup" class="text-blue-600 hover:underline">Sign Up</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      
+      if (!email || !password) {
+        e.preventDefault();
+        alert('Please fill in all fields');
+      }
+    });
+  </script>
+</body>
+</html>

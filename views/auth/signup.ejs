@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | MoneyTrail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-200 flex items-center justify-center min-h-screen">
+  <div class="bg-white text-gray-800 rounded-lg shadow-md w-full max-w-md p-6 relative">
+    
+    <%- include('../components/authHeader', {subtitle: 'Sign up to get started'}) %>
+    
+    <%- include('../components/socialAuth') %>
+    
+    <%- include('../components/errorMessage') %>
+
+    <form action="/auth/register" method="POST" id="signupForm" class="flex flex-col space-y-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div>
+        <label for="email" class="text-sm text-gray-700">Email</label>
+        <input
+          name="email"
+          type="email"
+          id="email"
+          placeholder="email@example.com"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          required
+        />
+      </div>
+      <div>
+        <label for="password" class="text-sm text-gray-700">Password</label>
+        <input
+          name="password"
+          type="password"
+          id="password"
+          placeholder="********"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          minlength="8"
+          required
+        />
+        <p class="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
+      </div>
+      <div>
+        <label for="confirmPassword" class="text-sm text-gray-700">Confirm Password</label>
+        <input
+          name="confirmPassword"
+          type="password"
+          id="confirmPassword"
+          placeholder="********"
+          class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
+      >
+        Sign Up
+      </button>
+    </form>
+    <p class="mt-4 text-center text-sm">
+      Already have an account?
+      <a href="/auth/login" class="text-blue-600 hover:underline">Log In</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (!email || !password || !confirmPassword) {
+        e.preventDefault();
+        alert('Please fill in all fields');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Passwords do not match');
+        return;
+      }
+      
+      if (password.length < 8) {
+        e.preventDefault();
+        alert('Password must be at least 8 characters long');
+      }
+    });
+  </script>
+</body>
+</html>

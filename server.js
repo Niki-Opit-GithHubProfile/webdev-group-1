@@ -15,7 +15,7 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: '*',
   credentials: true
 }));
 
@@ -32,15 +32,18 @@ app.use(
   session({
     store: new pgSession({
       conString: process.env.DATABASE_URL,
-      tableName: 'PgSession'
+      tableName: 'PgSession',
+      ttl: 60 * 60 * 24 * 30 // 30 days
     }),
     secret: process.env.SESSION_KEY,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    name: 'sessionId',
     cookie: {
-      secure: process.env.NODE_ENV === 'production', // Only secure in production
+      secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7 * 4, // 1 month
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
+      sameSite: 'lax'
     }
   })
 );
@@ -69,6 +72,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Temporary disable content security restrictions and allow loading resources from any domain
+app.use((req, res, next) => {
+  res.header('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';");
+  next();
+});
 
 // View engine setup
 app.set('view engine', 'ejs');
