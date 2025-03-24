@@ -1,96 +1,116 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-module.exports = {
-  listTransactions: async (req, res) => {
-    try {
-      const transactions = await prisma.transaction.findMany({
-        where: {
-          userId: req.session.user.id
-        },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      });
-      return res.render('dashboard', {
-        user: req.session.user,
-        transactions
-      });
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/dashboard');
-    }
-  },
-
-  createTransaction: async (req, res) => {
-    try {
-      const { type, amount } = req.body;
-      await prisma.transaction.create({
-        data: {
-          type,
-          amount: parseFloat(amount),
-          userId: req.session.user.id
-        }
-      });
-      this.listTransactions(req, res);
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/dashboard');
-    }
-  },
-
-  getTransaction: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const transaction = await prisma.transaction.findFirst({
-        where: {
-          id: parseInt(id),
-          userId: req.session.user.id
-        }
-      });
-      if (!transaction) {
-        this.listTransactions(req, res);
+exports.getAllTransactions = async (req, res) => {
+  try {
+    const userId = req.user.id; // Assuming user is attached via middleware
+    
+    const transactions = await prisma.transaction.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+      include: {
+        fromAsset: true,
+        toAsset: true
       }
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/dashboard');
-    }
-  },
+    });
+    
+    return res.json({ success: true, data: transactions });
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    return res.status(500).json({ success: false, message: 'Failed to fetch transactions' });
+  }
+};
 
-  updateTransaction: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { type, amount } = req.body;
-      await prisma.transaction.updateMany({
-        where: {
-          id: parseInt(id),
-          userId: req.session.user.id
-        },
-        data: {
-          type,
-          amount: parseFloat(amount)
-        }
-      });
-      this.listTransactions(req, res);
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/dashboard');
+exports.createTransaction = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { type, fromAssetId, toAssetId, fromAmount, toAmount, price, date } = req.body;
+    
+    // Validation
+    if (!['buy', 'sell', 'transfer'].includes(type)) {
+      return res.status(400).json({ success: false, message: 'Invalid transaction type' });
     }
-  },
+    
+    if (!fromAssetId || !toAssetId || !fromAmount || !toAmount || !price) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+    
+    const transaction = await prisma.transaction.create({
+      data: {
+        type,
+        fromAmount: parseFloat(fromAmount),
+        toAmount: parseFloat(toAmount),
+        price: parseFloat(price),
+        date: date ? new Date(date) : new Date(),
+        user: { connect: { id: userId } },
+        fromAsset: { connect: { id: fromAssetId } },
+        toAsset: { connect: { id: toAssetId } }
+      }
+    });
+    
+    return res.status(201).json({ success: true, data: transaction });
+  } catch (error) {
+    console.error('Error creating transaction:', error);
+    return res.status(500).json({ success: false, message: 'Failed to create transaction' });
+  }
+};
 
-  deleteTransaction: async (req, res) => {
-    try {
-      const { id } = req.params;
-      await prisma.transaction.deleteMany({
-        where: {
-          id: parseInt(id),
-          userId: req.session.user.id
-        }
-      });
-      this.listTransactions(req, res);
-    } catch (error) {
-      console.error(error);
-      return res.redirect('/dashboard');
+exports.updateTransaction = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { type, fromAssetId, toAssetId, fromAmount, toAmount, price, date } = req.body;
+    
+    // Check if transaction exists and belongs to user
+    const existingTransaction = await prisma.transaction.findFirst({
+      where: { id: parseInt(id), userId }
+    });
+    
+    if (!existingTransaction) {
+      return res.status(404).json({ success: false, message: 'Transaction not found' });
     }
+    
+    const transaction = await prisma.transaction.update({
+      where: { id: parseInt(id) },
+      data: {
+        type,
+        fromAmount: parseFloat(fromAmount),
+        toAmount: parseFloat(toAmount),
+        price: parseFloat(price),
+        date: date ? new Date(date) : existingTransaction.date,
+        fromAsset: fromAssetId ? { connect: { id: fromAssetId } } : undefined,
+        toAsset: toAssetId ? { connect: { id: toAssetId } } : undefined
+      }
+    });
+    
+    return res.json({ success: true, data: transaction });
+  } catch (error) {
+    console.error('Error updating transaction:', error);
+    return res.status(500).json({ success: false, message: 'Failed to update transaction' });
+  }
+};
+
+exports.deleteTransaction = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    
+    // Check if transaction exists and belongs to user
+    const existingTransaction = await prisma.transaction.findFirst({
+      where: { id: parseInt(id), userId }
+    });
+    
+    if (!existingTransaction) {
+      return res.status(404).json({ success: false, message: 'Transaction not found' });
+    }
+    
+    await prisma.transaction.delete({
+      where: { id: parseInt(id) }
+    });
+    
+    return res.json({ success: true, message: 'Transaction deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting transaction:', error);
+    return res.status(500).json({ success: false, message: 'Failed to delete transaction' });
   }
 };

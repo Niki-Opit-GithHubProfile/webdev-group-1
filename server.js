@@ -85,6 +85,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Import routes
 const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transaction');
+const apiRoutes = require('./routes/api');
 
 // Home route - Generate CSRF token
 app.get('/', (req, res) => {
@@ -130,6 +131,7 @@ app.get('/dashboard', async (req, res) => {
 // Mount route handlers
 app.use('/auth', authRoutes);
 app.use('/transactions', transactionRoutes);
+app.use('/api', apiRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

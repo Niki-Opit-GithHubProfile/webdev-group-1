@@ -16,6 +16,7 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@sendgrid/mail": "^8.1.4",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "connect-pg-simple": "^10.0.0",
@@ -28,15 +29,20 @@
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "helmet": "^8.0.0",
+    "node-cache": "^5.1.2",
     "pg": "^8.14.0",
-    "tailwindcss": "^4.0.14",
     "uuid": "^11.1.0"
   },
   "scripts": {
     "prisma": "node prisma/seed.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "tailwindcss -i ./src/styles.css -o ./public/css/styles.css",
+    "watch:css": "tailwindcss -i ./src/styles.css -o ./public/css/styles.css --watch"
   },
   "devDependencies": {
-    "prisma": "^6.5.0"
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "prisma": "^6.5.0",
+    "tailwindcss": "^4.0.15"
   }
 }
