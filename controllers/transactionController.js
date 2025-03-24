@@ -32,7 +32,7 @@ module.exports = {
           userId: req.session.user.id
         }
       });
-      return res.redirect('/transactions');
+      this.listTransactions(req, res);
     } catch (error) {
       console.error(error);
       return res.redirect('/dashboard');
@@ -49,9 +49,8 @@ module.exports = {
         }
       });
       if (!transaction) {
-        return res.redirect('/transactions');
+        this.listTransactions(req, res);
       }
-      return res.json(transaction);
     } catch (error) {
       console.error(error);
       return res.redirect('/dashboard');
@@ -72,7 +71,7 @@ module.exports = {
           amount: parseFloat(amount)
         }
       });
-      return res.redirect('/transactions');
+      this.listTransactions(req, res);
     } catch (error) {
       console.error(error);
       return res.redirect('/dashboard');
@@ -88,7 +87,7 @@ module.exports = {
           userId: req.session.user.id
         }
       });
-      return res.redirect('/transactions');
+      this.listTransactions(req, res);
     } catch (error) {
       console.error(error);
       return res.redirect('/dashboard');

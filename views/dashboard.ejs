@@ -5,7 +5,6 @@
 </head>
 <body>
   <h1>Dashboard</h1>
-  <p>Welcome, <%= user.email %></p>
   <form action="/logout" method="POST">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
     <button type="submit">Logout</button>
@@ -14,8 +13,8 @@
   <!-- Transaction list -->
   <h2>Your Transactions</h2>
   <ul>
-    <% if (transactions) { %>
-      <% transactions.forEach((tx) => { %>
+    <% if (user.transaction) { %>
+      <% user.transaction.forEach((tx) => { %>
         <li>
           <%= tx.type %> - <%= tx.amount %>
           <!-- For updating or deleting, you could add separate forms -->

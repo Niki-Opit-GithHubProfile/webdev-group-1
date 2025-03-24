@@ -2,90 +2,132 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
-const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const cookieParser = require('cookie-parser');
 const { doubleCsrf } = require('csrf-csrf');
-
-const {
-  doubleCsrfProtection,
-  generateToken
-} = doubleCsrf({
-  getSecret: () => process.env.CSRF_SECRET || 'dev_csrf_secret',
-  getSessionIdentifier: (req) => req.sessionID || '',
-  cookieName: 'psifi.x-csrf-token',
-  cookieOptions: {
-    secure: false,
-    httpOnly: false,
-    sameSite: 'lax',
-    path: '/'
-  },
-  size: 64,
-  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
-  getTokenFromRequest: (req) => req.body._csrf
-});
-
-const authRoutes = require('./routes/auth');
-const transactionRoutes = require('./routes/transaction');
+const cors = require('cors');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const app = express();
 app.use(helmet());
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
+
+// Middleware Setup
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
+app.use(cookieParser());
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Session middleware
 app.use(
   session({
     store: new pgSession({
-      conString: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/your_db'
+      conString: process.env.DATABASE_URL,
+      tableName: 'PgSession'
     }),
-    secret: process.env.SESSION_SECRET || 'y0ur_sess_secret',
+    secret: process.env.SESSION_KEY,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
-      secure: false,
+      secure: process.env.NODE_ENV === 'production', // Only secure in production
       httpOnly: true,
-      maxAge: 1000 * 60 * 60
+      maxAge: 1000 * 60 * 60 * 24 * 7 * 4, // 1 month
     }
   })
 );
 
-app.use(cookieParser('cookie_parser_secret'));
-app.use(express.urlencoded({ extended: true }));
+// CSRF setup
+const {
+  doubleCsrfProtection,
+  generateToken
+} = doubleCsrf({
+  getSecret: () => process.env.CSRF_KEY,
+  cookieName: 'csrf-token',
+  cookieOptions: {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false,
+    path: '/'
+  },
+  size: 64,
+  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
+  getTokenFromRequest: (req) => req.body._csrf || req.headers['x-csrf-token']
+});
+
+// CSRF token for all requests
+app.use((req, res, next) => {
+  res.locals.csrfToken = generateToken(req, res);
+  next();
+});
+
+
+// View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Import routes
+const authRoutes = require('./routes/auth');
+const transactionRoutes = require('./routes/transaction');
 
-// If you want a specific route to just generate+return a token (optional)
-app.get('/csrf-token', (req, res) => {
-  const csrfToken = generateToken(req, res);
-  return res.json({ csrfToken });
-});
-
-// Or generate a token right before rendering the home page:
+// Home route - Generate CSRF token
 app.get('/', (req, res) => {
   if (req.session.userId) {
     return res.redirect('/dashboard');
   }
-  // Generate a token and pass it to the EJS template
-  const csrfToken = generateToken(req, res);
-  return res.render('home', { csrfToken });
+  
+  return res.render('home');
 });
 
-// Protect non-GET routes
+// Use CSRF protection for all POST requests
 app.use(doubleCsrfProtection);
 
-// Example: protected dashboard
-app.get('/dashboard', (req, res) => {
+// Protected dashboard route
+app.get('/dashboard', async (req, res) => {
   if (!req.session.userId) {
     return res.redirect('/');
   }
-  return res.render('dashboard');
+  
+  try {
+    // Import PrismaClient at the top of your file if not already done
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    
+    // Fetch the user data from the database
+    const user = await prisma.user.findUnique({
+      where: { id: req.session.userId },
+      include: { transactions: true }
+    });
+    
+    if (!user) {
+      req.session.destroy();
+      return res.redirect('/');
+    }
+    
+    return res.render('dashboard', { user });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    return res.status(500).send('Server error');
+  }
 });
 
-// Other routes
+// Mount route handlers
 app.use('/auth', authRoutes);
 app.use('/transactions', transactionRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  res.status(err.status || 500).send(err.message);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -2,12 +2,14 @@ const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const crypto = require('crypto');
+
 // For sending verification emails
 const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY || 'YOUR_SENDGRID_API_KEY');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.registerUser = async (req, res) => {
   try {
+
     const { email, password } = req.body;
 
     // Basic validation
@@ -22,7 +24,7 @@ exports.registerUser = async (req, res) => {
     }
 
     // Hash password
-    const hashedPass = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate a token for email verification
     const verificationToken = crypto.randomBytes(20).toString('hex');
@@ -31,8 +33,8 @@ exports.registerUser = async (req, res) => {
     const newUser = await prisma.user.create({
       data: {
         email,
-        password: hashedPass,
-        verified: false,
+        passwordHash: hashedPassword,
+        emailVerified: false,
         verificationToken
       }
     });
@@ -47,7 +49,7 @@ exports.registerUser = async (req, res) => {
     };
     await sgMail.send(msg);
 
-    // Once registered, you can either auto-login or redirect
+    // Once registered, redirect to home page, implement autologin and redirect to dashboard
     return res.redirect('/');
   } catch (error) {
     console.error(error);
@@ -69,13 +71,13 @@ exports.loginUser = async (req, res) => {
     }
 
     // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(400).send('Invalid credentials');
     }
 
     // Check if verified
-    if (!user.verified) {
+    if (!user.emailVerified) {
       return res.status(403).send('Please verify your email first.');
     }
 
@@ -120,7 +122,10 @@ exports.verifyEmail = async (req, res) => {
     // Mark user as verified
     await prisma.user.update({
       where: { id: user.id },
-      data: { verified: true, verificationToken: '' }
+      data: { 
+        emailVerified: true, 
+        verificationToken: null 
+      }
     });
 
     return res.send('Email verified! You can now login.');

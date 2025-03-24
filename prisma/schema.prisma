@@ -1,85 +1,89 @@
-// This is your Prisma schema file
-// Learn more at: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") // This loads the value from the .env file
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  passwordHash  String   @default("default_hash") // Temporary default value
-  emailVerified Boolean  @default(false)
-  oauthProvider String?
-  oauthId       String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Relations
-  transactions Transaction[]
-  assets       Asset[]
-  sessions     Session[]
-  oauthTokens  OAuthToken[]
+  id                Int           @id @default(autoincrement())
+  email             String        @unique
+  createdAt         DateTime      @default(now())
+  oauthId           String?
+  oauthProvider     String?
+  passwordHash      String        @default("default_hash")
+  updatedAt         DateTime      @updatedAt
+  emailVerified     Boolean       @default(false)
+  verificationToken String?
+  assets            Asset[]
+  oauthTokens       OAuthToken[]
+  sessions          Session[]
+  transactions      Transaction[]
 }
 
 model Transaction {
   id              Int      @id @default(autoincrement())
   userId          Int
-  user            User     @relation(fields: [userId], references: [id])
-  transactionType String // buy or sell
-  assetName       String // BTC, ETH, etc.
+  transactionType String
+  assetName       String
   quantity        Float
   price           Float
   totalValue      Float
   transactionDate DateTime @default(now())
-  sourceAsset     String? // If a trade, this is the source asset
+  sourceAsset     String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
 }
 
 model Asset {
   id              Int      @id @default(autoincrement())
   userId          Int
-  user            User     @relation(fields: [userId], references: [id])
-  assetName       String // BTC, ETH, etc.
+  assetName       String
   quantity        Float
   averageBuyPrice Float
   totalValue      Float
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
 }
 
 model PriceHistory {
   id        Int      @id @default(autoincrement())
-  assetName String // BTC, ETH, etc.
+  assetName String
   price     Float
   timestamp DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model PgSession {
+  sid    String   @id @db.VarChar
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+}
+
 model Session {
   id        Int      @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model OAuthToken {
   id                Int      @id @default(autoincrement())
   userId            Int
-  user              User     @relation(fields: [userId], references: [id])
-  provider          String // Google or GitHub
+  provider          String
   oauthToken        String
   oauthRefreshToken String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id])
 }
