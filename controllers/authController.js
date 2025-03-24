@@ -38,21 +38,17 @@ exports.getSignupForm = (req, res) => {
 // Register user
 exports.registerUser = async (req, res) => {
   try {
-    const { email, password, confirmPassword } = req.body;
+    const { email, password, confirmPassword, name } = req.body;
 
     // Validation
-    if (!email || !password) {
-      return res.redirect('/auth/signup?error=' + encodeURIComponent('Email and password are required'));
+    if (!email || !password || !name) {
+      return res.redirect('/auth/signup?error=' + encodeURIComponent('Email, name, and password are required'));
     }
 
     if (password != confirmPassword) {
       return res.redirect('/auth/signup?error=' + encodeURIComponent('Passwords do not match'));
     }
     
-    if (password.length < 8) {
-      return res.redirect('/auth/signup?error=' + encodeURIComponent('Password must be at least 8 characters'));
-    }
-
     // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -63,24 +59,37 @@ exports.registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(20).toString('hex');
     
-    const newUser = await prisma.user.create({
-      data: {
-        email,
-        passwordHash: hashedPassword,
-        emailVerified: false,
-        verificationToken
-      }
+    // Create user with portfolio in transaction
+    const newUser = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email,
+          name,
+          passwordHash: hashedPassword,
+          emailVerified: false,
+          verificationToken
+        }
+      });
+      
+      // Create portfolio for the user
+      await tx.portfolio.create({
+        data: {
+          userId: user.id
+        }
+      });
+      
+      return user;
     });
 
     // Send verification email
     const msg = {
       to: email,
       from: process.env.SENDGRID_FROM_EMAIL,
-      subject: 'Verify your MoneyTrail account',
+      subject: 'Verify your account',
       text: `Click the link to verify your account: http://localhost:3000/auth/verify/${verificationToken}`,
       html: `
       <div style="font-family: 'Helvetica', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Welcome to MoneyTrail!</h2>
+        <h2>Welcome to CryptoTracker!</h2>
         <p>Thank you for signing up. Please verify your email to continue:</p>
         <a href="http://localhost:3000/auth/verify/${verificationToken}" 
         style="background-color: #172836; 
@@ -99,14 +108,11 @@ exports.registerUser = async (req, res) => {
           transition: all 0.3s ease;">
         Verify your account
         </a>
-        <p>If the button doesn't work, copy and paste this link into your browser:</p>
-        <p>http://localhost:3000/auth/verify/${verificationToken}</p>
       </div>
       `
     };
     await sgMail.send(msg);
 
-    // Redirect with success message
     return res.redirect('/auth/login?error=' + encodeURIComponent('Registration successful! Please verify your email.'));
   } catch (error) {
     console.error(error);

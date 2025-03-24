@@ -185,6 +185,96 @@
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Fetch portfolio data
+    async function fetchPortfolio() {
+      try {
+        const response = await fetch('/portfolio');
+        const data = await response.json();
+        
+        if (data.success) {
+          renderPortfolio(data.data);
+        } else {
+          console.error('Failed to fetch portfolio:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching portfolio:', error);
+      }
+    }
+
+    // Render portfolio holdings
+    function renderPortfolio(portfolio) {
+      const holdingsList = document.getElementById('holdings-list');
+      if (!holdingsList) return;
+      
+      holdingsList.innerHTML = '';
+      
+      if (!portfolio.holdings || portfolio.holdings.length === 0) {
+        holdingsList.innerHTML = '<tr><td colspan="4" class="text-center py-4">No holdings found</td></tr>';
+        return;
+      }
+      
+      portfolio.holdings.forEach(holding => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-4 py-2 border border-gray-600">${holding.asset.symbol}</td>
+          <td class="px-4 py-2 border border-gray-600">${holding.asset.name}</td>
+          <td class="px-4 py-2 border border-gray-600">${holding.balance}</td>
+          <td class="px-4 py-2 border border-gray-600">$0.00</td> <!-- Live price would be fetched from API -->
+        `;
+        holdingsList.appendChild(row);
+      });
+    }
+
+    // Fetch transactions
+    async function fetchTransactions() {
+      try {
+        const response = await fetch('/transactions');
+        const data = await response.json();
+        
+        if (data.success) {
+          renderTransactions(data.data);
+        } else {
+          console.error('Failed to fetch transactions:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    }
+
+    // Render transactions table
+    function renderTransactions(transactions) {
+      const transactionTable = document.getElementById('transactionTable');
+      if (!transactionTable) return;
+      
+      transactionTable.innerHTML = '';
+      
+      if (!transactions || transactions.length === 0) {
+        transactionTable.innerHTML = '<tr><td colspan="6" class="text-center py-4">No transactions found</td></tr>';
+        return;
+      }
+      
+      transactions.forEach(tx => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-4 py-2 border border-gray-600">${new Date(tx.createdAt).toLocaleString()}</td>
+          <td class="px-4 py-2 border border-gray-600">${tx.pair.base.symbol}/${tx.pair.quote.symbol}</td>
+          <td class="px-4 py-2 border border-gray-600">${tx.type}</td>
+          <td class="px-4 py-2 border border-gray-600">${tx.price}</td>
+          <td class="px-4 py-2 border border-gray-600">${tx.amount}</td>
+          <td class="px-4 py-2 border border-gray-600">${tx.total}</td>
+        `;
+        transactionTable.appendChild(row);
+      });
+    }
+
+    // Initialize
+    fetchPortfolio();
+    fetchTransactions();
+  });
+  </script>
+
+  <script>
     const ctx = document.getElementById('cryptoChart').getContext('2d');
     let cryptoChart = new Chart(ctx, {
       type: 'line',

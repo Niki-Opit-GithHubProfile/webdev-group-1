@@ -86,6 +86,8 @@ app.set('views', path.join(__dirname, 'views'));
 const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transaction');
 const apiRoutes = require('./routes/api');
+const portfolioRoutes = require('./routes/portfolio');
+const assetRoutes = require('./routes/asset');
 
 // Home route - Generate CSRF token
 app.get('/', (req, res) => {
@@ -106,10 +108,30 @@ app.get('/dashboard', async (req, res) => {
   }
   
   try {
-    // Fetch the user data from the database
+    // Updated to include portfolio with holdings
     const user = await prisma.user.findUnique({
       where: { id: req.session.userId },
-      include: { transactions: true }
+      include: { 
+        transactions: {
+          include: {
+            pair: {
+              include: {
+                base: true,
+                quote: true
+              }
+            }
+          }
+        },
+        portfolio: {
+          include: {
+            holdings: {
+              include: {
+                asset: true
+              }
+            }
+          }
+        }
+      }
     });
     
     if (!user) {
@@ -128,6 +150,8 @@ app.get('/dashboard', async (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/api', apiRoutes);
+app.use('/portfolio', portfolioRoutes);
+app.use('/assets', assetRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

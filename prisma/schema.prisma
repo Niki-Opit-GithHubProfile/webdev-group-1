@@ -8,55 +8,97 @@ datasource db {
 }
 
 model User {
-  id                Int           @id @default(autoincrement())
-  email             String        @unique
-  createdAt         DateTime      @default(now())
-  oauthId           String?
-  oauthProvider     String?
-  passwordHash      String        @default("default_hash")
-  updatedAt         DateTime      @updatedAt
-  emailVerified     Boolean       @default(false)
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  passwordHash String?
+  emailVerified Boolean @default(false)
   verificationToken String?
-  assets            Asset[]
-  oauthTokens       OAuthToken[]
-  sessions          Session[]
-  transactions      Transaction[]
-}
-
-model Transaction {
-  id              Int      @id @default(autoincrement())
-  userId          Int
-  transactionType String
-  assetName       String
-  quantity        Float
-  price           Float
-  totalValue      Float
-  transactionDate DateTime @default(now())
-  sourceAsset     String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  portfolio Portfolio?
+  transactions Transaction[]
+  sessions Session[]
 }
 
 model Asset {
-  id              Int      @id @default(autoincrement())
-  userId          Int
-  assetName       String
-  quantity        Float
-  averageBuyPrice Float
-  totalValue      Float
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id])
+  id      String  @id @default(uuid())
+  symbol  String  @unique
+  name    String
+  // Update these relations with names:
+  basePairs TradingPair[] @relation("BaseAsset")
+  quotePairs TradingPair[] @relation("QuoteAsset")
+  portfolioHoldings PortfolioHolding[]
 }
 
-model PriceHistory {
-  id        Int      @id @default(autoincrement())
-  assetName String
-  price     Float
-  timestamp DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model TradingPair {
+  id        String  @id @default(uuid())
+  baseId    String  @map("base_asset")
+  quoteId   String  @map("quote_asset")
+  // Add names to relations:
+  base      Asset   @relation("BaseAsset", fields: [baseId], references: [id])
+  quote     Asset   @relation("QuoteAsset", fields: [quoteId], references: [id])
+  transactions Transaction[]
+  historicalPrices HistoricalPrice[]
+  livePrice       LivePrice?
+  
+  @@unique([baseId, quoteId])
+}
+
+model Transaction {
+  id          String       @id @default(uuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  pairId      String
+  pair        TradingPair  @relation(fields: [pairId], references: [id])
+  type        TransactionType
+  price       Decimal
+  amount      Decimal
+  total       Decimal
+  createdAt   DateTime     @default(now())
+}
+
+enum TransactionType {
+  BUY
+  SELL
+}
+
+model Portfolio {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  holdings  PortfolioHolding[]
+}
+
+model PortfolioHolding {
+  id        String  @id @default(uuid())
+  portfolioId String
+  assetId   String
+  balance   Decimal
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+  asset     Asset     @relation(fields: [assetId], references: [id])
+  
+  @@unique([portfolioId, assetId])
+}
+
+model HistoricalPrice {
+  id        String      @id @default(uuid())
+  pairId    String
+  pair      TradingPair @relation(fields: [pairId], references: [id])
+  timestamp DateTime    @default(now())
+  open      Decimal
+  high      Decimal
+  low       Decimal
+  close     Decimal
+  volume    Decimal
+}
+
+model LivePrice {
+  id        String      @id @default(uuid())
+  pairId    String      @unique
+  pair      TradingPair @relation(fields: [pairId], references: [id])
+  price     Decimal
+  updatedAt DateTime    @updatedAt
 }
 
 model PgSession {
@@ -68,22 +110,11 @@ model PgSession {
 }
 
 model Session {
-  id        Int      @id @default(autoincrement())
-  userId    Int
+  id        String   @id @default(uuid())
+  userId    String
   token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id])
-}
-
-model OAuthToken {
-  id                Int      @id @default(autoincrement())
-  userId            Int
-  provider          String
-  oauthToken        String
-  oauthRefreshToken String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id])
 }
