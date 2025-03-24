@@ -9,7 +9,7 @@ const { doubleCsrf } = require('csrf-csrf');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
+const isAuthenticated = require('./middlewares/isAuthenticated');
 const app = express();
 app.use(helmet());
 
@@ -106,10 +106,6 @@ app.get('/dashboard', async (req, res) => {
   }
   
   try {
-    // Import PrismaClient at the top of your file if not already done
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
-    
     // Fetch the user data from the database
     const user = await prisma.user.findUnique({
       where: { id: req.session.userId },

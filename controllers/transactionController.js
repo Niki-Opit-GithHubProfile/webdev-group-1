@@ -3,14 +3,12 @@ const prisma = new PrismaClient();
 
 exports.getAllTransactions = async (req, res) => {
   try {
-    const userId = req.user.id; // Assuming user is attached via middleware
-    
+    const userId = req.session.userId;    
     const transactions = await prisma.transaction.findMany({
       where: { userId },
       orderBy: { date: 'desc' },
       include: {
-        fromAsset: true,
-        toAsset: true
+        user: true
       }
     });
     
@@ -23,7 +21,7 @@ exports.getAllTransactions = async (req, res) => {
 
 exports.createTransaction = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.session.userId;
     const { type, fromAssetId, toAssetId, fromAmount, toAmount, price, date } = req.body;
     
     // Validation
@@ -37,14 +35,14 @@ exports.createTransaction = async (req, res) => {
     
     const transaction = await prisma.transaction.create({
       data: {
-        type,
-        fromAmount: parseFloat(fromAmount),
-        toAmount: parseFloat(toAmount),
+        userId,
+        transactionType: type,
+        assetName,
+        quantity: parseFloat(quantity),
         price: parseFloat(price),
-        date: date ? new Date(date) : new Date(),
-        user: { connect: { id: userId } },
-        fromAsset: { connect: { id: fromAssetId } },
-        toAsset: { connect: { id: toAssetId } }
+        totalValue: parseFloat(totalValue),
+        sourceAsset,
+        transactionDate: date ? new Date(date) : new Date(),
       }
     });
     

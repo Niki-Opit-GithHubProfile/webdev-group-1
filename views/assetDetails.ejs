@@ -256,7 +256,7 @@
   <!-- Script for "Add Transaction" redirection -->
   <script>
     document.getElementById("addTransactionBtn").addEventListener("click", function () {
-      window.location.href = "addTransaction.html"; 
+      window.location.href = "/transactions/add"; 
     });
   </script>
 
@@ -282,7 +282,7 @@
       document.getElementById("logout-btn").addEventListener("click", function(e) {
         e.preventDefault();
         localStorage.removeItem("loggedIn"); // Simulated logout
-        window.location.href = "home-2.html"; // Redirect to home page
+        window.location.href = "/";
       });
     });
   </script>

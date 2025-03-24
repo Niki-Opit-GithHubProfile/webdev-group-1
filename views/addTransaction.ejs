@@ -32,6 +32,8 @@
 
     <!-- FORM -->
     <form id="transactionForm" class="space-y-6">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
       <!-- Date/Time -->
       <div>
         <label for="transactionDate" class="block text-sm font-medium mb-1">Date</label>
@@ -188,50 +190,72 @@
     const transactionForm = document.getElementById('transactionForm');
     const transactionTableBody = document.getElementById('transactionTableBody');
 
-    transactionForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+    transactionForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      // Retrieve entered values
-      const date = document.getElementById('transactionDate').value;
-      const pair = document.getElementById('tradingPair').value;
-      const type = document.getElementById('transactionType').value;
-      const entryPrice = parseFloat(entryPriceInput.value) || 0;
-      const quantity = parseFloat(quantityInput.value) || 0;
-      const total = parseFloat(totalValueInput.value) || 0;
+    const date = document.getElementById('transactionDate').value;
+    const assetName = document.getElementById('tradingPair').value;
+    const type = document.getElementById('transactionType').value;
+    const price = parseFloat(entryPriceInput.value) || 0;
+    const quantity = parseFloat(quantityInput.value) || 0;
+    const totalValue = parseFloat(totalValueInput.value) || 0;
 
-      // Example for 'current price' and 'P/L (%)'
-      const currentPrice = (entryPrice * 1.05).toFixed(8); // Example: +5%
-      const plPercent = entryPrice ? (((currentPrice - entryPrice) / entryPrice) * 100).toFixed(2) : '0.00';
+    // Add missing CSRF token to the form
+    const csrfToken = '<%= csrfToken %>';  
 
-      // Create a new table row
-      const newRow = document.createElement('tr');
-      newRow.classList.add('border-b', 'border-gray-700');
+    try {
+      const response = await fetch('/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
+        },
+        body: JSON.stringify({
+          transactionType: type,
+          assetName, 
+          quantity,
+          price,
+          totalValue,
+          transactionDate: date
+        })
+      });
 
-      newRow.innerHTML = `
-        <td class="px-4 py-2 whitespace-nowrap text-sm">${date}</td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm">${pair}</td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm">
-          <span class="${type === 'Buy' ? 'text-green-400' : 'text-red-400'} font-semibold">${type}</span>
-        </td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm">${entryPrice.toFixed(8)}</td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm">${quantity.toFixed(8)}</td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm">${total.toFixed(8)}</td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm">${currentPrice}</td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm ${plPercent >= 0 ? 'text-green-400' : 'text-red-400'}">
-          ${plPercent}%
-        </td>
-        <td class="px-4 py-2 whitespace-nowrap text-sm">
-          <button class="text-blue-400 hover:underline mr-2">Edit</button>
-          <button class="text-red-400 hover:underline">Delete</button>
-        </td>
-      `;
-      transactionTableBody.appendChild(newRow);
-
-      // Reset the form
-      transactionForm.reset();
-      totalValueInput.value = '';
-      usdEquivalentInput.value = '';
-    });
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Add transaction to the table
+        const newRow = document.createElement('tr');
+        const dateObj = new Date(date);
+        newRow.innerHTML = `
+          <td class="px-4 py-2">${dateObj.toLocaleString()}</td>
+          <td class="px-4 py-2">${assetName}</td>
+          <td class="px-4 py-2">${type}</td>
+          <td class="px-4 py-2">${price.toFixed(8)}</td>
+          <td class="px-4 py-2">${quantity.toFixed(8)}</td>
+          <td class="px-4 py-2">${totalValue.toFixed(8)}</td>
+          <td class="px-4 py-2">-</td>
+          <td class="px-4 py-2">-</td>
+          <td class="px-4 py-2">
+            <button class="text-blue-400 hover:text-blue-600">Edit</button>
+            <button class="text-red-400 hover:text-red-600 ml-2">Delete</button>
+          </td>
+        `;
+        transactionTableBody.appendChild(newRow);
+        
+        // Reset form
+        transactionForm.reset();
+        totalValueInput.value = '';
+        usdEquivalentInput.value = '';
+        
+        alert('Transaction added successfully!');
+      } else {
+        throw new Error('Failed to add transaction');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error adding transaction: ' + error.message);
+    }
+  });
   </script>
 </body>
 </html>
