@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Add Transactions</title>
+  <script>
+    // Quick Tailwind configuration to customize colors (adjust as needed)
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4A90E2',
+            accent: '#1C1F2A',
+            darkBg: '#2A2F3A'
+          }
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif']
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-accent text-gray-100 min-h-screen flex items-center justify-center">
+  <!-- Main Container (Card) -->
+  <div class="bg-darkBg w-full max-w-2xl mx-auto rounded-lg shadow-lg p-8">
+    <!-- Title -->
+    <h1 class="text-3xl font-bold mb-6 text-center">Add Transaction</h1>
+
+    <!-- FORM -->
+    <form id="transactionForm" class="space-y-6">
+      <!-- Date/Time -->
+      <div>
+        <label for="transactionDate" class="block text-sm font-medium mb-1">Date</label>
+        <input
+          type="datetime-local"
+          id="transactionDate"
+          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          required
+        />
+      </div>
+
+      <!-- Trading Pair (Input with Datalist) -->
+      <div>
+        <label for="tradingPair" class="block text-sm font-medium mb-1">Trading Pair</label>
+        <input
+          list="pairs"
+          id="tradingPair"
+          placeholder="e.g., BTC/ETH"
+          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          required
+        />
+        <datalist id="pairs">
+          <option value="BTC/ETH"></option>
+          <option value="ETH/USDT"></option>
+          <option value="BTC/USDT"></option>
+          <option value="DOGE/ETH"></option>
+        </datalist>
+      </div>
+
+      <!-- Type (Buy/Sell) -->
+      <div>
+        <label for="transactionType" class="block text-sm font-medium mb-1">Type</label>
+        <div class="relative">
+          <select
+            id="transactionType"
+            class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-primary"
+            required
+          >
+            <option value="Buy">Buy</option>
+            <option value="Sell">Sell</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+            ▼
+          </div>
+        </div>
+      </div>
+
+      <!-- Entry Price -->
+      <div>
+        <label for="entryPrice" class="block text-sm font-medium mb-1">Entry Price</label>
+        <input
+          type="number"
+          step="any"
+          id="entryPrice"
+          placeholder="0.03"
+          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          required
+        />
+      </div>
+
+      <!-- Quantity -->
+      <div>
+        <label for="quantity" class="block text-sm font-medium mb-1">Quantity</label>
+        <input
+          type="number"
+          step="any"
+          id="quantity"
+          placeholder="0.1"
+          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          required
+        />
+      </div>
+
+      <!-- Total (auto-calculated) -->
+      <div>
+        <label for="totalValue" class="block text-sm font-medium mb-1">Total</label>
+        <input
+          type="text"
+          id="totalValue"
+          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="Auto-calculated"
+          readonly
+        />
+      </div>
+
+      <!-- USD Equivalent (placeholder for real-time conversion) -->
+      <div>
+        <label for="usdEquivalent" class="block text-sm font-medium mb-1">USD Equivalent</label>
+        <input
+          type="text"
+          id="usdEquivalent"
+          placeholder="Auto-updated from API"
+          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          readonly
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="w-full bg-primary text-white py-2 rounded-md hover:bg-blue-700 transition font-semibold"
+      >
+        Add Transaction
+      </button>
+    </form>
+
+    <!-- TRANSACTION HISTORY -->
+    <div class="mt-8">
+      <h2 class="text-2xl font-bold mb-4">Transaction History</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left table-auto">
+          <thead class="bg-darkBg text-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-sm font-semibold">Date</th>
+              <th class="px-4 py-2 text-sm font-semibold">Pair</th>
+              <th class="px-4 py-2 text-sm font-semibold">Type</th>
+              <th class="px-4 py-2 text-sm font-semibold">Price</th>
+              <th class="px-4 py-2 text-sm font-semibold">Amount</th>
+              <th class="px-4 py-2 text-sm font-semibold">Total</th>
+              <th class="px-4 py-2 text-sm font-semibold">Current Price</th>
+              <th class="px-4 py-2 text-sm font-semibold">P/L (%)</th>
+              <th class="px-4 py-2 text-sm font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody" class="bg-[#242731] text-gray-200">
+            <!-- Transaction rows will be added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const entryPriceInput = document.getElementById('entryPrice');
+    const quantityInput = document.getElementById('quantity');
+    const totalValueInput = document.getElementById('totalValue');
+    const usdEquivalentInput = document.getElementById('usdEquivalent');
+
+    // Automatically calculates the total when the price or quantity changes
+    function updateTotal() {
+      const price = parseFloat(entryPriceInput.value) || 0;
+      const quantity = parseFloat(quantityInput.value) || 0;
+      const total = price * quantity;
+      totalValueInput.value = total ? total.toFixed(8) : '';
+
+      // Placeholder: Example conversion to USD (adjust according to a real API)
+      const usdValue = total * 1000;
+      usdEquivalentInput.value = usdValue ? `$${usdValue.toFixed(2)}` : '';
+    }
+    entryPriceInput.addEventListener('input', updateTotal);
+    quantityInput.addEventListener('input', updateTotal);
+
+    // Transaction form handling
+    const transactionForm = document.getElementById('transactionForm');
+    const transactionTableBody = document.getElementById('transactionTableBody');
+
+    transactionForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Retrieve entered values
+      const date = document.getElementById('transactionDate').value;
+      const pair = document.getElementById('tradingPair').value;
+      const type = document.getElementById('transactionType').value;
+      const entryPrice = parseFloat(entryPriceInput.value) || 0;
+      const quantity = parseFloat(quantityInput.value) || 0;
+      const total = parseFloat(totalValueInput.value) || 0;
+
+      // Example for 'current price' and 'P/L (%)'
+      const currentPrice = (entryPrice * 1.05).toFixed(8); // Example: +5%
+      const plPercent = entryPrice ? (((currentPrice - entryPrice) / entryPrice) * 100).toFixed(2) : '0.00';
+
+      // Create a new table row
+      const newRow = document.createElement('tr');
+      newRow.classList.add('border-b', 'border-gray-700');
+
+      newRow.innerHTML = `
+        <td class="px-4 py-2 whitespace-nowrap text-sm">${date}</td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm">${pair}</td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm">
+          <span class="${type === 'Buy' ? 'text-green-400' : 'text-red-400'} font-semibold">${type}</span>
+        </td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm">${entryPrice.toFixed(8)}</td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm">${quantity.toFixed(8)}</td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm">${total.toFixed(8)}</td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm">${currentPrice}</td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm ${plPercent >= 0 ? 'text-green-400' : 'text-red-400'}">
+          ${plPercent}%
+        </td>
+        <td class="px-4 py-2 whitespace-nowrap text-sm">
+          <button class="text-blue-400 hover:underline mr-2">Edit</button>
+          <button class="text-red-400 hover:underline">Delete</button>
+        </td>
+      `;
+      transactionTableBody.appendChild(newRow);
+
+      // Reset the form
+      transactionForm.reset();
+      totalValueInput.value = '';
+      usdEquivalentInput.value = '';
+    });
+  </script>
+</body>
+</html>
