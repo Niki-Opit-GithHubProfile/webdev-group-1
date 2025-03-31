@@ -21,10 +21,21 @@ exports.getAssetDetails = async (req, res) => {
     const asset = await prisma.asset.findUnique({
       where: { id },
       include: {
-        pairs: {
+        basePairs: {
           include: {
             base: true,
             quote: true
+          }
+        },
+        quotePairs: {
+          include: {
+            base: true,
+            quote: true
+          }
+        },
+        portfolioHoldings: {
+          include: {
+            portfolio: true
           }
         }
       }

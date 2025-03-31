@@ -25,7 +25,6 @@ model Asset {
   id      String  @id @default(uuid())
   symbol  String  @unique
   name    String
-  // Update these relations with names:
   basePairs TradingPair[] @relation("BaseAsset")
   quotePairs TradingPair[] @relation("QuoteAsset")
   portfolioHoldings PortfolioHolding[]

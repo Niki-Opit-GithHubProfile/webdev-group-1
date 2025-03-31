@@ -3,29 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="/css/output.css">
   <title>Add Transactions</title>
-  <script>
-    // Quick Tailwind configuration to customize colors (adjust as needed)
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#4A90E2',
-            accent: '#1C1F2A',
-            darkBg: '#2A2F3A'
-          }
-        },
-        fontFamily: {
-          sans: ['Inter', 'system-ui', 'sans-serif']
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="/css/output.css">
 </head>
-<body class="bg-accent text-gray-100 min-h-screen flex items-center justify-center">
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
   <!-- Main Container (Card) -->
-  <div class="bg-darkBg w-full max-w-2xl mx-auto rounded-lg shadow-lg p-8">
+  <div class="bg-gray-800 w-full max-w-2xl mx-auto rounded-lg shadow-lg p-8">
     <!-- Title -->
     <h1 class="text-3xl font-bold mb-6 text-center">Add Transaction</h1>
 
@@ -39,18 +22,17 @@
         <input
           type="datetime-local"
           id="transactionDate"
-          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         />
       </div>
-
-      <!-- Trading Pair (Input with Datalist) -->
+      
       <!-- Trading Pair (Input with Datalist) -->
       <div>
         <label for="tradingPair" class="block text-sm font-medium mb-1">Trading Pair</label>
         <select
           id="tradingPair"
-          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         >
           <option value="">Select a trading pair</option>
@@ -66,7 +48,7 @@
         <div class="relative">
           <select
             id="transactionType"
-            class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-primary"
+            class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-white"
             required
           >
             <option value="Buy">Buy</option>
@@ -86,7 +68,7 @@
           step="any"
           id="entryPrice"
           placeholder="0.03"
-          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         />
       </div>
@@ -99,7 +81,7 @@
           step="any"
           id="quantity"
           placeholder="0.1"
-          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         />
       </div>
@@ -110,7 +92,7 @@
         <input
           type="text"
           id="totalValue"
-          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           placeholder="Auto-calculated"
           readonly
         />
@@ -123,7 +105,7 @@
           type="text"
           id="usdEquivalent"
           placeholder="Auto-updated from API"
-          class="w-full rounded-md border border-gray-600 bg-darkBg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           readonly
         />
       </div>
@@ -131,208 +113,11 @@
       <!-- Submit Button -->
       <button
         type="submit"
-        class="w-full bg-primary text-white py-2 rounded-md hover:bg-blue-700 transition font-semibold"
+        class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition font-semibold"
       >
         Add Transaction
       </button>
     </form>
 
-    <!-- TRANSACTION HISTORY -->
-    <div class="mt-8">
-      <h2 class="text-2xl font-bold mb-4">Transaction History</h2>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left table-auto">
-          <thead class="bg-darkBg text-gray-100">
-            <tr>
-              <th class="px-4 py-2 text-sm font-semibold">Date</th>
-              <th class="px-4 py-2 text-sm font-semibold">Pair</th>
-              <th class="px-4 py-2 text-sm font-semibold">Type</th>
-              <th class="px-4 py-2 text-sm font-semibold">Price</th>
-              <th class="px-4 py-2 text-sm font-semibold">Amount</th>
-              <th class="px-4 py-2 text-sm font-semibold">Total</th>
-              <th class="px-4 py-2 text-sm font-semibold">Current Price</th>
-              <th class="px-4 py-2 text-sm font-semibold">P/L (%)</th>
-              <th class="px-4 py-2 text-sm font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="transactionTableBody" class="bg-[#242731] text-gray-200">
-            <!-- Transaction rows will be added here -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const entryPriceInput = document.getElementById('entryPrice');
-    const quantityInput = document.getElementById('quantity');
-    const totalValueInput = document.getElementById('totalValue');
-    const usdEquivalentInput = document.getElementById('usdEquivalent');
-
-    // Automatically calculates the total when the price or quantity changes
-    function updateTotal() {
-      const price = parseFloat(entryPriceInput.value) || 0;
-      const quantity = parseFloat(quantityInput.value) || 0;
-      const total = price * quantity;
-      totalValueInput.value = total ? total.toFixed(8) : '';
-
-      // Placeholder: Example conversion to USD (adjust according to a real API)
-      const usdValue = total * 1000;
-      usdEquivalentInput.value = usdValue ? `$${usdValue.toFixed(2)}` : '';
-    }
-    entryPriceInput.addEventListener('input', updateTotal);
-    quantityInput.addEventListener('input', updateTotal);
-
-    // Load existing transactions when page loads
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const response = await fetch('/transactions');
-        const data = await response.json();
-        
-        if (data.success && data.data && Array.isArray(data.data)) {
-          // Clear existing rows
-          transactionTableBody.innerHTML = '';
-          
-          // Add each transaction to the table
-          data.data.forEach(tx => {
-            const row = document.createElement('tr');
-            const date = new Date(tx.createdAt);
-            const pairName = `${tx.pair.base.symbol}/${tx.pair.quote.symbol}`;
-            
-            row.innerHTML = `
-              <td class="px-4 py-2">${date.toLocaleString()}</td>
-              <td class="px-4 py-2">${pairName}</td>
-              <td class="px-4 py-2">${tx.type === 'BUY' ? 'Buy' : 'Sell'}</td>
-              <td class="px-4 py-2">${parseFloat(tx.price).toFixed(8)}</td>
-              <td class="px-4 py-2">${parseFloat(tx.amount).toFixed(8)}</td>
-              <td class="px-4 py-2">${parseFloat(tx.total).toFixed(8)}</td>
-              <td class="px-4 py-2">-</td>
-              <td class="px-4 py-2">-</td>
-              <td class="px-4 py-2">
-                <button class="text-blue-400 hover:text-blue-600 edit-btn" data-id="${tx.id}">Edit</button>
-                <button class="text-red-400 hover:text-red-600 ml-2 delete-btn" data-id="${tx.id}">Delete</button>
-              </td>
-            `;
-            transactionTableBody.appendChild(row);
-          });
-        } else {
-          console.error('Failed to fetch transactions:', data.message);
-        }
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-      }
-    });
-
-    // Transaction form handling
-    const transactionForm = document.getElementById('transactionForm');
-    const transactionTableBody = document.getElementById('transactionTableBody');
-
-    transactionForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const date = document.getElementById('transactionDate').value;
-    const pairSelect = document.getElementById('tradingPair');
-    const pairId = pairSelect.value;
-    const pairText = pairSelect.options[pairSelect.selectedIndex].text;
-    const type = document.getElementById('transactionType').value;
-    const price = parseFloat(entryPriceInput.value) || 0;
-    const quantity = parseFloat(quantityInput.value) || 0;
-    const totalValue = parseFloat(totalValueInput.value) || 0;
-
-    // Validate form
-    if (!pairId) {
-      alert('Please select a valid trading pair');
-      return;
-    }
-
-    // Add CSRF token to the request
-    const csrfToken = '<%= csrfToken %>';  
-
-    try {
-      const response = await fetch('/transactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-csrf-token': csrfToken
-        },
-        body: JSON.stringify({
-          type: type === "Buy" ? "BUY" : "SELL",
-          pairId: pairId,
-          price: price,
-          amount: quantity
-        })
-      });
-
-      const result = await response.json();
-        
-      if (response.ok) {
-        // Add transaction to the table
-        const newRow = document.createElement('tr');
-        const dateObj = new Date(date);
-        newRow.innerHTML = `
-          <td class="px-4 py-2">${dateObj.toLocaleString()}</td>
-          <td class="px-4 py-2">${pairText}</td>
-          <td class="px-4 py-2">${type}</td>
-          <td class="px-4 py-2">${price.toFixed(8)}</td>
-          <td class="px-4 py-2">${quantity.toFixed(8)}</td>
-          <td class="px-4 py-2">${totalValue.toFixed(8)}</td>
-          <td class="px-4 py-2">-</td>
-          <td class="px-4 py-2">-</td>
-          <td class="px-4 py-2">
-            <button class="text-blue-400 hover:text-blue-600 edit-btn" data-id="${result.data?.id || ''}">Edit</button>
-            <button class="text-red-400 hover:text-red-600 ml-2 delete-btn" data-id="${result.data?.id || ''}">Delete</button>
-          </td>
-        `;
-        transactionTableBody.appendChild(newRow);
-        
-        // Reset form
-        transactionForm.reset();
-        totalValueInput.value = '';
-        usdEquivalentInput.value = '';
-        
-        alert('Transaction added successfully!');
-      } else {
-        throw new Error(result.message || 'Failed to add transaction');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error adding transaction: ' + error.message);
-    }
-  });
-
-  // Handle delete buttons
-  transactionTableBody.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('delete-btn')) {
-      const transactionId = e.target.dataset.id;
-      if (!transactionId) return;
-      
-      if (confirm('Are you sure you want to delete this transaction?')) {
-        try {
-          const response = await fetch(`/transactions/${transactionId}`, {
-            method: 'DELETE',
-            headers: {
-              'x-csrf-token': csrfToken
-            }
-          });
-          
-          if (response.ok) {
-            // Remove the row from the table
-            const row = e.target.closest('tr');
-            if (row) {
-              row.remove();
-            }
-            alert('Transaction deleted successfully');
-          } else {
-            const data = await response.json();
-            throw new Error(data.message || 'Failed to delete transaction');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('Error deleting transaction: ' + error.message);
-        }
-      }
-    }
-  });
-</script>
 </body>
 </html>

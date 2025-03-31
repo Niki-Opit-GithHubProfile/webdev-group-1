@@ -20,6 +20,7 @@
     "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "bottleneck": "^2.19.5",
     "connect-pg-simple": "^10.0.0",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
@@ -39,8 +40,9 @@
     "dev": "nodemon server.js",
     "seed": "node prisma/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-"build:css": "npx tailwindcss -i ./public/css/styles.css -o ./public/css/output.css",
-"watch:css": "npx tailwindcss -i ./public/css/styles.css -o ./public/css/output.css --watch"  },
+    "build:css": "npx tailwindcss -i ./public/css/styles.css -o ./public/css/output.css",
+    "watch:css": "npx tailwindcss -i ./public/css/styles.css -o ./public/css/output.css --watch"
+  },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
