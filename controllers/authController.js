@@ -7,16 +7,15 @@ const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Legacy handler (can be removed later)
-exports.getForms = (req, res) => {
-  if (req.session.userId) {
-    return res.redirect('/dashboard');
-  }
-  // Redirect to new login page
-  return res.redirect('/auth/login');
-}
+// Authentication Status
+exports.authStatus = (req, res) => {
+  return res.json({
+    isAuthenticated: !!req.session.userId,
+    csrfToken: req.csrfToken()
+  });
+};
 
-// New dedicated handlers
+// Authentification Forms
 exports.getLoginForm = (req, res) => {
   if (req.session.userId) {
     return res.redirect('/dashboard');
@@ -65,7 +64,7 @@ exports.registerUser = async (req, res) => {
         data: {
           email,
           name,
-          passwordHash: hashedPassword,
+          password: hashedPassword,
           emailVerified: false,
           verificationToken
         }
@@ -89,7 +88,7 @@ exports.registerUser = async (req, res) => {
       text: `Click the link to verify your account: http://localhost:3000/auth/verify/${verificationToken}`,
       html: `
       <div style="font-family: 'Helvetica', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Welcome to CryptoTracker!</h2>
+        <h2>Welcome to MoneyTrail!</h2>
         <p>Thank you for signing up. Please verify your email to continue:</p>
         <a href="http://localhost:3000/auth/verify/${verificationToken}" 
         style="background-color: #172836; 
@@ -124,30 +123,54 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.redirect('/auth/login?error=' + encodeURIComponent('Email and password are required'));
-    }
-
-    const user = await prisma.user.findUnique({ where: { email } });
+    
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+    
     if (!user) {
-      return res.redirect('/auth/login?error=' + encodeURIComponent('Invalid credentials'));
+      return res.render('auth/login', { 
+        error: 'Invalid email or password',
+        csrfToken: req.csrfToken()
+      });
     }
-
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) {
-      return res.redirect('/auth/login?error=' + encodeURIComponent('Invalid credentials'));
+    
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+    if (!isPasswordValid) {
+      return res.render('auth/login', { 
+        error: 'Invalid email or password',
+        csrfToken: req.csrfToken()
+      });
     }
-
+    
+    // Check if user is verified
     if (!user.emailVerified) {
-      return res.redirect('/auth/login?error=' + encodeURIComponent('Please verify your email first'));
+      return res.render('auth/login', {
+        error: 'Please verify your email before logging in',
+        csrfToken: req.csrfToken() 
+      });
     }
-
+    
+    // Set user session
     req.session.userId = user.id;
+    req.session.isLoggedIn = true;
+    
+    // Check if first login (onboarding needed)
+    if (!user.completedOnboarding) {
+      return res.redirect('/onboarding');
+    }
+    
+    // Regular login - redirect to dashboard
     return res.redirect('/dashboard');
   } catch (error) {
-    console.error(error);
-    return res.redirect('/auth/login?error=' + encodeURIComponent('Server error. Please try again.'));
+    console.error('Login error:', error);
+    return res.render('auth/login', { 
+      error: 'Login failed. Please try again.',
+      csrfToken: req.csrfToken() 
+    });
   }
 };
 

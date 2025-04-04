@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/css/output.css">
   <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <title>MoneyTrail</title>
   <style>
     .custom-container {
@@ -82,12 +82,12 @@
 </head>
 <body class="bg-[#0B0E14] text-white">
   <!-- NAVIGATION BAR with Glassmorphism effect -->
-  <nav class="bg-[#131A24] bg-opacity-80 backdrop-blur-md border-b border-gray-700 relative fixed w-full z-50">
+  <nav class="bg-[#131A24] bg-opacity-80 backdrop-blur-md border-b border-gray-700 relative w-full z-50">
     <div class="custom-container">
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center">
-          <img src="./assets/logo.png" alt="Logo" class="w-10 h-10 rounded-full" />
+          <img src="./assets/navbar/logo.png" alt="Logo" class="w-10 h-10 rounded-full" />
         </div>
         <!-- Desktop Navigation Links -->
         <div class="hidden sm:flex flex-1 justify-center space-x-4">
@@ -154,7 +154,7 @@
           </button>
         </div>
         <div class="lg:w-1/2 flex justify-center mt-8 lg:mt-0">
-          <img src="./assets/asset1.jpg" alt="Trading on a tablet" class="rounded-lg shadow-xl w-full max-w-md" />
+          <img src="./assets/home/asset1.jpg" alt="Trading on a tablet" class="rounded-lg shadow-xl w-full max-w-md" />
         </div>
       </div>
     </section>
@@ -170,7 +170,7 @@
           <!-- Slide 1: Trading Made Easy -->
           <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
             <div class="lg:w-1/2 flex justify-center">
-              <img src="./assets/asset4.jpg" alt="Crypto charts" class="rounded-lg shadow-xl w-full max-w-md" />
+              <img src="./assets/home/asset2.jpg" alt="Crypto charts" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
             <div class="lg:w-1/2 text-center lg:text-left px-4">
               <h2 class="text-4xl lg:text-5xl font-bold mb-4">Trading Made Easy</h2>
@@ -230,123 +230,12 @@
     </section>
   </div>
 
-  <!-- SCRIPTS -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Initialize Lucide Icons
-      lucide.createIcons();
+  <!-- FOOTER -->
 
-      // Mobile Menu Toggle
-      const menuButton = document.getElementById('menu-toggle');
-      const mobileMenu = document.getElementById('mobile-menu');
-      menuButton.addEventListener('click', function () {
-        const expanded = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', !expanded);
-        mobileMenu.classList.toggle('hidden');
-      });
 
-      // Simulated authentication state (in real project, use token/API)
-      const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  <!-- Application Scripts -->
+<script src="/js/home-ui.js"></script>
+<script src="/js/home.js"></script>
 
-      // Logic for "My Dashboard" button (desktop)
-      const dashboardBtn = document.getElementById("dashboard-btn");
-      dashboardBtn.addEventListener("click", function(e) {
-        e.preventDefault();
-        if (isLoggedIn) {
-          window.location.href = "/dashboard";
-        } else {
-          window.location.href = "/auth/login";
-        }
-      });
-
-      // Logic for "My Dashboard" button (mobile)
-      const dashboardBtnMobile = document.getElementById("dashboard-btn-mobile");
-      if(dashboardBtnMobile) {
-        dashboardBtnMobile.addEventListener("click", function(e) {
-          e.preventDefault();
-          if (isLoggedIn) {
-            window.location.href = "/dashboard";
-          } else {
-            window.location.href = "/auth/login";
-          }
-        });
-      }
-
-      // Logic for "Personal Dashboard" button in the first slide of Features
-      const personalDashboardBtn = document.getElementById("personal-dashboard-btn");
-      personalDashboardBtn.addEventListener("click", function(e) {
-        e.preventDefault();
-        if (isLoggedIn) {
-          window.location.href = "/dashboard";
-        } else {
-          window.location.href = "/auth/login";
-        }
-      });
-      // Logic for "Get Started" button in Hero section
-      const getStartedBtn = document.getElementById("get-started-btn");
-      getStartedBtn.addEventListener("click", function(e) {
-        e.preventDefault();
-        if (isLoggedIn) {
-          window.location.href = "/dashboard";
-        } else {
-          window.location.href = "/auth/signup"; // Sends to signup instead of login
-        }
-      });
-
-      // Logic for the Account button dropdown
-      const accountBtn = document.getElementById("account-btn");
-      const accountDropdown = document.getElementById("account-dropdown");
-      accountBtn.addEventListener("click", function(e) {
-        e.stopPropagation();
-        accountDropdown.classList.toggle("show");
-      });
-      // Close the dropdown when clicking outside
-      document.addEventListener("click", function(e) {
-        if (!accountBtn.contains(e.target) && !accountDropdown.contains(e.target)) {
-          accountDropdown.classList.remove("show");
-        }
-      });
-
-      // FEATURES CAROUSEL
-      const featuresCarousel = document.getElementById('features-carousel');
-      const featureDots = document.querySelectorAll('#features-dots .dot');
-      let featureIndex = 0;
-      const totalFeatures = featuresCarousel.children.length;
-      
-      function updateFeatureDots() {
-        featureDots.forEach((dot, idx) => {
-          if(idx === featureIndex) {
-            dot.classList.remove('bg-gray-500');
-            dot.classList.add('bg-blue-500');
-          } else {
-            dot.classList.remove('bg-blue-500');
-            dot.classList.add('bg-gray-500');
-          }
-        });
-      }
-      
-      featureDots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          featureIndex = parseInt(dot.getAttribute('data-index'));
-          featuresCarousel.style.transform = `translateX(-${featureIndex * 100}%)`;
-          updateFeatureDots();
-        });
-      });
-
-      // Navigation Arrows for Slider
-      const prevBtn = document.getElementById('prev-btn');
-      const nextBtn = document.getElementById('next-btn');
-      prevBtn.addEventListener('click', function() {
-        featureIndex = (featureIndex - 1 + totalFeatures) % totalFeatures;
-        featuresCarousel.style.transform = `translateX(-${featureIndex * 100}%)`;
-        updateFeatureDots();
-      });
-      nextBtn.addEventListener('click', function() {
-        featureIndex = (featureIndex + 1) % totalFeatures;
-        featuresCarousel.style.transform = `translateX(-${featureIndex * 100}%)`;
-        updateFeatureDots();
-      });
-    });
-  </script>
 </body>
 </html>

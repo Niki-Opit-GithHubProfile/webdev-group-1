@@ -1,0 +1,74 @@
+<%- include('../components/header') %>
+
+<div class="container mx-auto px-4 mt-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+      <div class="bg-blue-600 px-6 py-4">
+        <h3 class="text-xl font-bold text-white mb-0">Welcome to MoneyTrail!</h3>
+      </div>
+      
+      <div class="p-6">
+        <h4 class="text-lg font-semibold mb-2">Before we get started</h4>
+        <p class="text-gray-300 mb-6">
+          Have you previously made crypto trades or are you just starting your investment journey?
+        </p>
+        
+        <form action="/onboarding" method="POST" id="onboardingForm">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          
+          <div class="space-y-4 mb-6">
+            <div class="border-2 border-gray-700 hover:border-blue-500 hover:bg-gray-700 rounded-lg p-4 transition cursor-pointer option-card">
+              <input class="hidden" type="radio" name="investorType" id="newInvestor" value="new" required>
+              <label class="block cursor-pointer w-full h-full" for="newInvestor">
+                <span class="font-bold">I'm new to crypto</span> - I haven't made any trades yet and want to start fresh
+              </label>
+            </div>
+            
+            <div class="border-2 border-gray-700 hover:border-blue-500 hover:bg-gray-700 rounded-lg p-4 transition cursor-pointer option-card">
+              <input class="hidden" type="radio" name="investorType" id="existingInvestor" value="existing" required>
+              <label class="block cursor-pointer w-full h-full" for="existingInvestor">
+                <span class="font-bold">I'm an existing investor</span> - I already have crypto assets and want to track them
+              </label>
+            </div>
+          </div>
+          
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            Continue
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  // Make the whole card clickable for the radio options
+  const radioContainers = document.querySelectorAll('.option-card');
+
+  radioContainers.forEach(container => {
+    const radio = container.querySelector('input[type="radio"]');
+    
+    // Initial state setup if a radio is already checked
+    if (radio.checked) {
+      container.classList.remove('border-gray-700');
+      container.classList.add('border-blue-500', 'bg-gray-700');
+    }
+    
+    container.addEventListener('click', () => {
+      radio.checked = true;
+      
+      // Reset all containers to default style
+      radioContainers.forEach(c => {
+        c.classList.remove('border-blue-500', 'bg-gray-700');
+        c.classList.add('border-gray-700');
+      });
+      
+      // Highlight the selected container
+      container.classList.remove('border-gray-700');
+      container.classList.add('border-blue-500', 'bg-gray-700');
+    });
+  });
+  });
+</script>
+

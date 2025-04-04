@@ -1,25 +1,45 @@
 const axios = require('axios');
 const NodeCache = require('node-cache');
 const Bottleneck = require('bottleneck');
+const { normalizePrice, normalizeHistoricalData, normalizeCoinsList } = require('../utils/dataNormalizers');
 
 // Cache with tiered TTL (different for different data types)
 const cache = new NodeCache({ stdTTL: 300 });
 
-// Rate limiter to prevent API quota issues
+// Rate limiter to prevent API quota issues - more conservative for free tier
 const limiter = new Bottleneck({
-  minTime: 1500, // Minimum time between requests (1.5 seconds)
-  maxConcurrent: 1, // Only process one request at a time
-  reservoir: 50,    // Initial number of requests allowed
-  reservoirRefreshAmount: 50, // How many requests to add back
-  reservoirRefreshInterval: 60 * 1000 // Refresh interval (1 minute)
+  minTime: 3000,     // Minimum time between requests (3 seconds for free tier)
+  maxConcurrent: 1,  // Only process one request at a time
+  reservoir: 10,     // Initial number of requests allowed (CoinGecko free tier is ~10-50/min)
+  reservoirRefreshAmount: 10, // How many requests to add back
+  reservoirRefreshInterval: 60 * 1000, // Refresh interval (1 minute)
+  // Add exponential backoff for failures
+  retryOptions: {
+    retries: 3,
+    minTimeout: 5000,
+    maxTimeout: 60000,
+    backoffFactor: 2
+  }
 });
+
+// Track remaining API calls and adjust rate limiter dynamically
+let remainingAPICalls = 10; // Start conservative
 
 class CryptoApiService {
   constructor() {
+    // Load environment variables or use defaults
+    const apiKey = process.env.COINGECKO_API_KEY || '';
+    const apiUrl = process.env.COINGECKO_API_URL || 'https://api.coingecko.com/api/v3';
+    const apiTimeout = parseInt(process.env.COINGECKO_API_TIMEOUT || '10000', 10);
+
+    // Create axios client with environment configuration
     this.client = axios.create({
-      baseURL: 'https://api.coingecko.com/api/v3',
-      timeout: 10000,
-      headers: {'Accept': 'application/json'}
+      baseURL: apiUrl,
+      timeout: apiTimeout,
+      headers: {
+        'Accept': 'application/json',
+        ...(apiKey && {'x-cg-pro-api-key': apiKey})  // Only add API key if it exists
+      }
     });
     
     // Initialize cache for frequently accessed data
@@ -44,7 +64,40 @@ class CryptoApiService {
 
   // Wrapper for API calls with rate limiting
   async makeRateLimitedRequest(endpoint, params = {}) {
-    return limiter.schedule(() => this.client.get(endpoint, { params }));
+    try {
+      const response = await limiter.schedule(() => this.client.get(endpoint, { params }));
+      
+      // Check response headers for rate limit information
+      const remaining = parseInt(response.headers['x-ratelimit-remaining'] || remainingAPICalls, 10);
+      
+      // Update our understanding of remaining calls
+      remainingAPICalls = remaining;
+      
+      // Adjust limiter settings based on remaining calls
+      if (remaining < 3) {
+        // Very low remaining calls, increase delay significantly
+        limiter.updateSettings({ minTime: 10000 });
+      } else if (remaining < 10) {
+        // Low remaining calls, increase delay
+        limiter.updateSettings({ minTime: 5000 });
+      } else {
+        // Normal operation
+        limiter.updateSettings({ minTime: 3000 });
+      }
+      
+      return response;
+    } catch (error) {
+      // Check if it's a rate limit error
+      if (error.response && error.response.status === 429) {
+        // Reduce limits dramatically on rate limit error
+        limiter.updateSettings({ 
+          minTime: 30000,
+          reservoir: Math.max(1, remainingAPICalls - 1)
+        });
+        remainingAPICalls = Math.max(0, remainingAPICalls - 1);
+      }
+      throw error;
+    }
   }
 
   async getPrice(coinIds) {
@@ -61,16 +114,21 @@ class CryptoApiService {
         include_market_cap: true
       });
       
+      // Log raw response for debugging
+      console.log('CoinGecko raw response:', JSON.stringify(response.data).substring(0, 200) + '...');
+      
+      // Map API response to our DTO format using normalizer
+      const normalizedData = normalizePrice(response.data);
+      
       // Set a shorter TTL for price data since it changes frequently
-      cache.set(cacheKey, response.data, 120); // 2 minutes TTL
-      return response.data;
+      cache.set(cacheKey, normalizedData, 120); // 2 minutes TTL
+      return normalizedData;
+
     } catch (error) {
       if (error.response) {
         const status = error.response.status;
         if (status === 429) {
           throw new Error('Rate limit exceeded. Please try again later.');
-        } else if (status >= 500) {
-          throw new Error('CoinGecko API server error. Please try again later.');
         }
       }
       console.error('CoinGecko API error:', error.message);
@@ -86,9 +144,14 @@ class CryptoApiService {
     
     try {
       const response = await this.makeRateLimitedRequest('/coins/list');
+      
+      // Map API response to our DTO format
+      const normalizedData = normalizeCoinsList(response.data);
+      
       // Set a longer TTL for coins list as it doesn't change often
-      cache.set(cacheKey, response.data, 86400); // 24 hours TTL
-      return response.data;
+      cache.set(cacheKey, normalizedData, 86400); // 24 hours TTL
+      return normalizedData;
+
     } catch (error) {
       if (error.response && error.response.status === 429) {
         throw new Error('Rate limit exceeded. Please try again later.');
@@ -121,16 +184,15 @@ class CryptoApiService {
         days: days
       });
       
-      // Validate response data
-      if (!response.data || !response.data.prices || !Array.isArray(response.data.prices)) {
-        throw new Error('Invalid response format from API');
-      }
+      // Map API response to DTO format
+      const normalizedData = normalizeHistoricalData(response.data);
       
       // Set TTL based on timeframe - shorter for recent data, longer for historical
       const ttl = days <= 7 ? 300 : days <= 30 ? 1800 : 3600; // 5min, 30min, or 1hr
-      cache.set(cacheKey, response.data, ttl);
+      cache.set(cacheKey, normalizedData, ttl);
       
-      return response.data;
+      return normalizedData;
+
     } catch (error) {
       if (error.response) {
         const status = error.response.status;

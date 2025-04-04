@@ -88,6 +88,9 @@ const transactionRoutes = require('./routes/transaction');
 const apiRoutes = require('./routes/api');
 const portfolioRoutes = require('./routes/portfolio');
 const assetRoutes = require('./routes/asset');
+const onboardingRoutes = require('./routes/onboarding');
+const depositRoutes = require('./routes/deposit');
+const withdrawalRoutes = require('./routes/withdrawal');
 
 // Home route - Generate CSRF token
 app.get('/', (req, res) => {
@@ -139,7 +142,18 @@ app.get('/dashboard', async (req, res) => {
       return res.redirect('/');
     }
     
-    return res.render('dashboard', { user });
+    // Check for onboarding completion message
+    const onboardingComplete = req.session.onboardingComplete;
+    
+    // Clear the flag after use
+    if (onboardingComplete) {
+      req.session.onboardingComplete = null;
+    }
+    
+    return res.render('dashboard', { 
+      user,
+      onboardingComplete
+    });
   } catch (error) {
     console.error('Error fetching user data:', error);
     return res.status(500).send('Server error');
@@ -149,9 +163,12 @@ app.get('/dashboard', async (req, res) => {
 // Mount route handlers
 app.use('/auth', authRoutes);
 app.use('/transactions', transactionRoutes);
+app.use('/deposits', depositRoutes);
+app.use('/withdrawals', withdrawalRoutes);
 app.use('/api', apiRoutes);
 app.use('/portfolio', portfolioRoutes);
 app.use('/assets', assetRoutes);
+app.use('/onboarding', onboardingRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

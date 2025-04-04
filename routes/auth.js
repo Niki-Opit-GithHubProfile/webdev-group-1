@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { 
-  getForms, registerUser, loginUser, logoutUser, verifyEmail,
+  authStatus, registerUser, loginUser, logoutUser, verifyEmail,
   getLoginForm, getSignupForm 
 } = require('../controllers/authController');
 
-// Legacy route (for backward compatibility)
-router.get('/authForms', getForms);
+// Authentication Status
+router.get('/auth-status', authStatus);
 
 // Auth Forms Routes
 router.get('/login', getLoginForm);

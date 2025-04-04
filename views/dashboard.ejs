@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crypto Dashboard</title>
+  <title>MoneyTrail</title>
   <link rel="stylesheet" href="/css/output.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -16,8 +16,10 @@
       <div class="flex h-16 items-center justify-between">
         <!-- Logo and Branding -->
         <div class="flex items-center space-x-2">
-          <img src="./assets/logo.png" alt="CoinRates Logo" class="w-10 h-10 rounded-full" />
-          <span class="hidden sm:block font-bold text-xl">CoinRates</span>
+          <img src="./assets/navbar/logo.png" alt="MoneyTrail Logo" class="w-10 h-10 rounded-full" />
+          <h1>
+            <span class="hidden sm:block font-bold text-xl">MoneyTrail</span>
+          </h1>
         </div>
         <!-- Desktop Navigation Links -->
         <div class="hidden sm:flex flex-1 justify-center space-x-6">
@@ -32,10 +34,10 @@
         </div>
         <!-- Account/Profile Section -->
         <div class="relative flex items-center space-x-2">
-          <span class="hidden md:block">Hi, Filip</span>
+          <span class="hidden md:block">Hi, <%= user.name %></span>
           <button id="account-btn" type="button"
             class="relative flex rounded-full bg-[#131A24] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
-            <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full" />
+            <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
           </button>
           <!-- Account Dropdown -->
           <div id="account-dropdown" class="account-dropdown">
@@ -76,35 +78,33 @@
       </div>
     </div>
   </nav>
+
+  <% if (locals.onboardingComplete) { %>
+    <div class="bg-green-600 text-white p-4 rounded-md mb-6 flex items-center justify-between" id="onboardingSuccessMessage">
+      <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Your portfolio has been set up successfully! You're now ready to start tracking your crypto investments.</span>
+      </div>
+      <button 
+        class="text-white hover:text-green-200" 
+        onclick="document.getElementById('onboardingSuccessMessage').remove();"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  <% } %>
+
   <div class="flex h-screen">
     <!-- Left Sidebar -->
-    <div class="w-1/6 bg-gray-800 p-6 border-r border-gray-700 rounded-lg mt-6 mx-6">
-
-      <h1 class="text-2xl font-bold">CoinRates</h1>
-      <div class="mt-6 space-y-4 text-lg">
-        <div class="flex items-center justify-between">
-          <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC" class="w-6 h-6">
-          <span>BTC: <span id="btc-price">$12,000</span></span>
-          <span class="text-green-400">+22.31%</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH" class="w-6 h-6">
-          <span>ETH: <span id="eth-price">$6,000</span></span>
-          <span class="text-green-400">+15.42%</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <img src="https://cryptologos.cc/logos/xrp-xrp-logo.png" alt="XRP" class="w-6 h-6">
-          <span>XRP: <span id="xrp-price">$2,500</span></span>
-          <span class="text-red-400">-3.12%</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <img src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="SOL" class="w-6 h-6">
-          <span>SOL: <span id="sol-price">$1,500</span></span>
-          <span class="text-green-400">+9.87%</span>
-        </div>
+    <div class="w-[200px] bg-gray-800 p-3 border-r border-gray-700 rounded-lg mt-6 ml-4 overflow-auto max-h-[calc(100vh-6rem)]">
+      <h2 class="text-xl font-bold mb-3">Owned assets:</h2>
+      <div id="asset-holdings-list" class="space-y-2">
+        <!-- Dynamic content will be inserted here -->
       </div>
-
-
     </div>
 
     <!-- Main Content -->
@@ -115,7 +115,7 @@
             <h2 class="text-2xl font-semibold">Portfolio Overview</h2>
             <p class="text-gray-400 text-lg">
               Total Value:
-              <span id="converted-value" class="text-white font-bold">$9,200.98</span>
+              <span id="converted-value" class="text-white font-bold">$0.00</span>
             </p>
             <p class="text-gray-400 text-lg">
               Equivalent in:
@@ -134,14 +134,13 @@
         </div>
 
         <!-- Pie Chart -->
-        <div class="w-full md:w-1/2 lg:w-1/3 bg-gray-800 p-4 rounded-lg">
+        <div id="composition-chart" class="w-full md:w-1/2 lg:w-1/3 bg-gray-800 p-4 rounded-lg">
           <canvas id="portfolioChart"></canvas>
         </div>
-        <button class="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600" id="addTransactionBtn">Add
-          Transaction</button>
       </div>
 
-      <div class="mt-4">
+      <!-- Portfolio Performance Chart -->
+      <div id="time-chart" class="mt-4">
         <!-- Timeframe Buttons -->
         <div class="mb-4 space-x-2">
           <button class="bg-gray-700 px-3 py-1 rounded" onclick="updateChart('1d')">1D</button>
@@ -156,257 +155,121 @@
           <canvas id="cryptoChart"></canvas>
         </div>
       </div>
+      
     </div>
 
-    <!-- Right Sidebar-->
+    <!--|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-| Right Sidebar-->
     <div class="mt-6 mx-6 p-4 bg-gray-800 rounded-lg">
-      <h3 class="text-lg font-semibold mb-3">Transaction History</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left text-gray-300 border border-gray-700">
-          <thead class="bg-gray-700 text-gray-200">
-            <tr>
-              <th class="px-4 py-2 border border-gray-600">Date</th>
-              <th class="px-4 py-2 border border-gray-600">Pair</th>
-              <th class="px-4 py-2 border border-gray-600">Type</th>
-              <th class="px-4 py-2 border border-gray-600">Price</th>
-              <th class="px-4 py-2 border border-gray-600">Amount</th>
-              <th class="px-4 py-2 border border-gray-600">Total</th>
-              <th class="px-4 py-2 border border-gray-600">Current Price</th>
-              <th class="px-4 py-2 border border-gray-600">P/L (%)</th>
-            </tr>
-          </thead>
-          <tbody id="transactionTable">
-            <!-- Transactions will be inserted dynamically -->
-          </tbody>
-        </table>
-      </div>
-    </div>
+      
+      <!-- Tab Navigation -->
+      <div class="flex border-b border-gray-700 mb-4">
+        <div class="object-contain w-6 h-full flex-shrink bg-white" >
+          <button id="right-sidebar-btn">
+            <img src="./assets/expand-right-sidebar.svg" alt="expand-icon" class="w-full h-full object-contain">
+          </button>
+        </div>
 
+        <button class="tab-button px-4 py-2 font-medium text-sm focus:outline-none" data-tab="transactions-tab">
+          Transactions
+        </button>
+        <button class="tab-button px-4 py-2 font-medium text-sm focus:outline-none" data-tab="deposits-tab">
+          Deposits
+        </button>
+        <button class="tab-button px-4 py-2 font-medium text-sm focus:outline-none" data-tab="withdrawals-tab">
+          Withdrawals
+        </button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex space-x-2 mb-4">
+        <button id="addTransactionBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm">
+          Add Transaction
+        </button>
+        <button id="addDepositBtn" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm">
+          Add Deposit
+        </button>
+        <button id="addWithdrawalBtn" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm">
+          Add Withdrawal
+        </button>
+      </div>
+
+      <!--|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-| Right Sidebar Content -->
+    
+      <!-- Transactions Tab -->
+      <div id="transactions-tab" class="tab-content">
+        <h3 class="text-lg font-semibold mb-3">Transaction History</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-300 border border-gray-700">
+            <thead class="bg-gray-700 text-gray-200">
+              <tr>
+                <th class="px-4 py-2 border border-gray-600">Date</th>
+                <th class="px-4 py-2 border border-gray-600">Pair</th>
+                <th class="px-4 py-2 border border-gray-600">Type</th>
+                <th class="px-4 py-2 border border-gray-600">Price</th>
+                <th class="px-4 py-2 border border-gray-600">Amount</th>
+                <th id="t-commission" class="px-4 py-2 border border-gray-600">Commission</th>
+                <th class="px-4 py-2 border border-gray-600">Total</th>
+                <th class="px-4 py-2 border border-gray-600">P/L (%)</th>
+                <th id="t-notes" class="px-4 py-2 border border-gray-600">Notes</th>
+              </tr>
+            </thead>
+            <tbody id="transactionTable">
+              <!-- Transactions will be inserted dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Deposits Tab -->
+      <div id="deposits-tab" class="tab-content hidden">
+        <h3 class="text-lg font-semibold mb-3">Deposit History</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-300 border border-gray-700">
+            <thead class="bg-gray-700 text-gray-200">
+              <tr>
+                <th class="px-4 py-2 border border-gray-600">Date</th>
+                <th class="px-4 py-2 border border-gray-600">Asset</th>
+                <th class="px-4 py-2 border border-gray-600">Amount</th>
+                <th id="d-commission" class="px-4 py-2 border border-gray-600">Commission</th>
+                <th class="px-4 py-2 border border-gray-600">Total</th>
+                <th id="d-notes" class="px-4 py-2 border border-gray-600">Notes</th>
+              </tr>
+            </thead>
+            <tbody id="depositTable">
+              <!-- Deposits will be inserted dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Withdrawals Tab -->
+      <div id="withdrawals-tab" class="tab-content hidden">
+        <h3 class="text-lg font-semibold mb-3">Withdrawal History</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-300 border border-gray-700">
+            <thead class="bg-gray-700 text-gray-200">
+              <tr>
+                <th class="px-4 py-2 border border-gray-600">Date</th>
+                <th class="px-4 py-2 border border-gray-600">Asset</th>
+                <th class="px-4 py-2 border border-gray-600">Amount</th>
+                <th id="w-commission" class="px-4 py-2 border border-gray-600">Commission</th>
+                <th class="px-4 py-2 border border-gray-600">Total</th>
+                <th id="w-notes" class="px-4 py-2 border border-gray-600">Notes</th>
+              </tr>
+            </thead>
+            <tbody id="withdrawalTable">
+              <!-- Withdrawals will be inserted dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!--|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-| End Dashboard  -->
+
+    </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Fetch portfolio data
-    async function fetchPortfolio() {
-      try {
-        const response = await fetch('/portfolio');
-        const data = await response.json();
-        
-        if (data.success) {
-          renderPortfolio(data.data);
-        } else {
-          console.error('Failed to fetch portfolio:', data.message);
-        }
-      } catch (error) {
-        console.error('Error fetching portfolio:', error);
-      }
-    }
-
-    // Render portfolio holdings
-    function renderPortfolio(portfolio) {
-      const holdingsList = document.getElementById('holdings-list');
-      if (!holdingsList) return;
-      
-      holdingsList.innerHTML = '';
-      
-      if (!portfolio.holdings || portfolio.holdings.length === 0) {
-        holdingsList.innerHTML = '<tr><td colspan="4" class="text-center py-4">No holdings found</td></tr>';
-        return;
-      }
-      
-      portfolio.holdings.forEach(holding => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="px-4 py-2 border border-gray-600">${holding.asset.symbol}</td>
-          <td class="px-4 py-2 border border-gray-600">${holding.asset.name}</td>
-          <td class="px-4 py-2 border border-gray-600">${holding.balance}</td>
-          <td class="px-4 py-2 border border-gray-600">$0.00</td> <!-- Live price would be fetched from API -->
-        `;
-        holdingsList.appendChild(row);
-      });
-    }
-
-    // Fetch transactions
-    async function fetchTransactions() {
-      try {
-        const response = await fetch('/transactions');
-        const data = await response.json();
-        
-        if (data.success) {
-          renderTransactions(data.data);
-        } else {
-          console.error('Failed to fetch transactions:', data.message);
-        }
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-      }
-    }
-
-    // Render transactions table
-    function renderTransactions(transactions) {
-      const transactionTable = document.getElementById('transactionTable');
-      if (!transactionTable) return;
-      
-      transactionTable.innerHTML = '';
-      
-      if (!transactions || transactions.length === 0) {
-        transactionTable.innerHTML = '<tr><td colspan="6" class="text-center py-4">No transactions found</td></tr>';
-        return;
-      }
-      
-      transactions.forEach(tx => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="px-4 py-2 border border-gray-600">${new Date(tx.createdAt).toLocaleString()}</td>
-          <td class="px-4 py-2 border border-gray-600">${tx.pair.base.symbol}/${tx.pair.quote.symbol}</td>
-          <td class="px-4 py-2 border border-gray-600">${tx.type}</td>
-          <td class="px-4 py-2 border border-gray-600">${tx.price}</td>
-          <td class="px-4 py-2 border border-gray-600">${tx.amount}</td>
-          <td class="px-4 py-2 border border-gray-600">${tx.total}</td>
-        `;
-        transactionTable.appendChild(row);
-      });
-    }
-
-    // Initialize
-    fetchPortfolio();
-    fetchTransactions();
-  });
-  </script>
-
-  <script>
-    const ctx = document.getElementById('cryptoChart').getContext('2d');
-    let cryptoChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: []
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: { display: true },
-          y: { display: true }
-        }
-      }
-    });
-
-    async function fetchCryptoPrices() {
-      try {
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,ripple,solana&vs_currencies=usd');
-        const data = await response.json();
-        document.getElementById('btc-price').innerText = `$${data.bitcoin.usd}`;
-        document.getElementById('eth-price').innerText = `$${data.ethereum.usd}`;
-        document.getElementById('xrp-price').innerText = `$${data.ripple.usd}`;
-        document.getElementById('sol-price').innerText = `$${data.solana.usd}`;
-      } catch (error) {
-        console.error('Error fetching crypto prices:', error);
-      }
-    }
-
-    async function updateChart(timeframe) {
-      try {
-        const response = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=${timeframe}`);
-        const data = await response.json();
-
-        const labels = data.prices.map(entry => new Date(entry[0]).toLocaleDateString());
-        const prices = data.prices.map(entry => entry[1]);
-
-        cryptoChart.data.labels = labels;
-        cryptoChart.data.datasets = [{
-          label: 'BTC Price',
-          data: prices,
-          borderColor: 'rgb(255, 165, 0)',
-          fill: false
-        }];
-        cryptoChart.update();
-      } catch (error) {
-        console.error('Error fetching market data:', error);
-      }
-    }
-
-    setInterval(fetchCryptoPrices, 5000);
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchCryptoPrices();
-      updateChart('1d');
-    });
-
-    const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
-    const portfolioChart = new Chart(portfolioCtx, {
-      type: 'pie',
-      data: {
-        labels: ['BTC', 'ETH', 'XRP', 'SOL'],
-        datasets: [{
-          data: [35, 25, 20, 20], // Example data, replace with real portfolio
-          backgroundColor: ['#f7931a', '#3c3c3d', '#346aa9', '#9933cc']
-        }]
-      }
-    });
-
-    // Example transaction data
-    const transactions = [
-      { date: "12/02/2025", pair: "ETH/BTC", type: "Sell", price: "0.03 BTC", amount: "0.1 ETH", total: "0.003 BTC", current: "0.035", pl: "+16.67%" },
-      { date: "12/02/2025", pair: "ETH/BTC", type: "Buy", price: "0.03 BTC", amount: "0.1 ETH", total: "0.003 BTC", current: "0.035", pl: "+16.67%" }
-    ];
-
-    function populateTransactions() {
-      const table = document.getElementById("transactionTable");
-      transactions.forEach(tx => {
-        let row = `<tr class="border border-gray-700">
-                    <td class="px-4 py-2 border border-gray-600">${tx.date}</td>
-                    <td class="px-4 py-2 border border-gray-600">${tx.pair}</td>
-                    <td class="px-4 py-2 border border-gray-600">${tx.type}</td>
-                    <td class="px-4 py-2 border border-gray-600">${tx.price}</td>
-                    <td class="px-4 py-2 border border-gray-600">${tx.amount}</td>
-                    <td class="px-4 py-2 border border-gray-600">${tx.total}</td>
-                    <td class="px-4 py-2 border border-gray-600">${tx.current}</td>
-                    <td class="px-4 py-2 border border-gray-600">${tx.pl}</td>
-                </tr>`;
-        table.innerHTML += row;
-      });
-    }
-
-    // Populate transactions on page load
-    document.addEventListener("DOMContentLoaded", populateTransactions);
-
-    // Initialize Lucide Icons
-    document.addEventListener("DOMContentLoaded", function () {
-      lucide.createIcons();
-    });
-
-    // Dropdown Menu
-    document.getElementById('crypto-selector').addEventListener('change', async function () {
-      const selectedCrypto = this.value;
-      const totalUsdValue = 9200.98; // Example total portfolio value in USD
-
-      if (selectedCrypto === 'usd') {
-        document.getElementById('converted-value').innerText = `$${totalUsdValue.toFixed(2)}`;
-        return;
-      }
-
-      try {
-        const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${selectedCrypto}&vs_currencies=usd`);
-        const data = await response.json();
-        const conversionRate = data[selectedCrypto]?.usd;
-
-        if (conversionRate) {
-          const convertedValue = totalUsdValue / conversionRate;
-          document.getElementById('converted-value').innerText = `${convertedValue.toFixed(6)} ${selectedCrypto.toUpperCase()}`;
-        } else {
-          document.getElementById('converted-value').innerText = "Conversion Error";
-        }
-      } catch (error) {
-        document.getElementById('converted-value').innerText = "API Error";
-      }
-    });
-
-  </script>
-
-  <script>
-    document.getElementById("addTransactionBtn").addEventListener("click", function () {
-      window.location.href = "/transactions/add";
-    });
-  </script>
+  <!-- Include the external JavaScript file -->
+  <script src="/js/dashboard.js"></script>
 </body>
-
 </html>

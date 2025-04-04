@@ -1,6 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const bcrypt = require('bcryptjs');
 
 async function seedAssets() {
   // Common cryptocurrencies
@@ -72,65 +71,10 @@ async function seedTradingPairs() {
   }
 }
 
-async function seedDemoUser() {
-  console.log('Seeding demo user...');
-  
-  const hashedPassword = await bcrypt.hash('password123', 10);
-  
-  const user = await prisma.user.upsert({
-    where: { email: 'demo@example.com' },
-    update: {},
-    create: {
-      email: 'demo@example.com',
-      name: 'Demo User',
-      passwordHash: hashedPassword,
-      emailVerified: true
-    }
-  });
-  
-  // Create portfolio for demo user
-  await prisma.portfolio.upsert({
-    where: { userId: user.id },
-    update: {},
-    create: {
-      userId: user.id,
-    }
-  });
-  
-  // Add some initial funds
-  const portfolio = await prisma.portfolio.findUnique({
-    where: { userId: user.id }
-  });
-  
-  const usdAsset = await prisma.asset.findUnique({
-    where: { symbol: 'USD' }
-  });
-  
-  if (portfolio && usdAsset) {
-    await prisma.portfolioHolding.upsert({
-      where: { 
-        portfolioId_assetId: {
-          portfolioId: portfolio.id,
-          assetId: usdAsset.id
-        }
-      },
-      update: { 
-        balance: 10000.00
-      },
-      create: {
-        portfolioId: portfolio.id,
-        assetId: usdAsset.id,
-        balance: 10000.00
-      }
-    });
-  }
-}
-
 async function main() {
   try {
     await seedAssets();
     await seedTradingPairs();
-    await seedDemoUser();
     console.log('Seed completed successfully!');
   } catch (error) {
     console.error('Error during seeding:', error);

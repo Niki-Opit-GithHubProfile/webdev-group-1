@@ -8,76 +8,131 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  passwordHash String?
-  emailVerified Boolean @default(false)
-  verificationToken String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  portfolio Portfolio?
-  transactions Transaction[]
-  sessions Session[]
+  id                  String        @id @default(cuid())
+  name                String?
+  email               String        @unique
+  password            String
+  emailVerified       Boolean       @default(false)
+  completedOnboarding Boolean       @default(false)
+  verificationToken   String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  portfolio           Portfolio?
+  transactions        Transaction[]
+  deposits            Deposit[]
+  withdrawals         Withdrawal[]
+  session             Session[]
 }
 
 model Asset {
-  id      String  @id @default(uuid())
-  symbol  String  @unique
-  name    String
-  basePairs TradingPair[] @relation("BaseAsset")
-  quotePairs TradingPair[] @relation("QuoteAsset")
+  id                String             @id @default(cuid())
+  symbol            String             @unique
+  name              String
+  decimals          Int                @default(8)
+  basePairs         TradingPair[]      @relation("BasePair")
+  quotePairs        TradingPair[]      @relation("QuotePair")
   portfolioHoldings PortfolioHolding[]
+  deposits          Deposit[]
+  withdrawals       Withdrawal[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
 
 model TradingPair {
-  id        String  @id @default(uuid())
-  baseId    String  @map("base_asset")
-  quoteId   String  @map("quote_asset")
-  // Add names to relations:
-  base      Asset   @relation("BaseAsset", fields: [baseId], references: [id])
-  quote     Asset   @relation("QuoteAsset", fields: [quoteId], references: [id])
-  transactions Transaction[]
-  historicalPrices HistoricalPrice[]
-  livePrice       LivePrice?
-  
+  id              String            @id @default(cuid())
+  baseId          String
+  quoteId         String
+  base            Asset             @relation("BasePair", fields: [baseId], references: [id])
+  quote           Asset             @relation("QuotePair", fields: [quoteId], references: [id])
+  transactions    Transaction[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  HistoricalPrice HistoricalPrice[]
+  LivePrice       LivePrice?
+
   @@unique([baseId, quoteId])
-}
-
-model Transaction {
-  id          String       @id @default(uuid())
-  userId      String
-  user        User         @relation(fields: [userId], references: [id])
-  pairId      String
-  pair        TradingPair  @relation(fields: [pairId], references: [id])
-  type        TransactionType
-  price       Decimal
-  amount      Decimal
-  total       Decimal
-  createdAt   DateTime     @default(now())
-}
-
-enum TransactionType {
-  BUY
-  SELL
+  @@index([baseId])
+  @@index([quoteId])
 }
 
 model Portfolio {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
+  id        String             @id @default(cuid())
+  userId    String             @unique
+  user      User               @relation(fields: [userId], references: [id])
   holdings  PortfolioHolding[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
 }
 
 model PortfolioHolding {
-  id        String  @id @default(uuid())
-  portfolioId String
-  assetId   String
-  balance   Decimal
-  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
-  asset     Asset     @relation(fields: [assetId], references: [id])
-  
+  id           String    @id @default(cuid())
+  portfolioId  String
+  portfolio    Portfolio @relation(fields: [portfolioId], references: [id])
+  assetId      String
+  asset        Asset     @relation(fields: [assetId], references: [id])
+  balance      Float
+  averagePrice Float     @default(0)
+  totalCost    Float     @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
   @@unique([portfolioId, assetId])
+  @@index([portfolioId])
+  @@index([assetId])
+}
+
+model Transaction {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  pairId     String
+  pair       TradingPair @relation(fields: [pairId], references: [id])
+  type       String // BUY or SELL
+  price      Float
+  amount     Float
+  total      Float
+  commission Float       @default(0)
+  date       DateTime
+  notes      String?     @db.Text
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([pairId])
+}
+
+model Deposit {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  assetId    String
+  asset      Asset    @relation(fields: [assetId], references: [id])
+  amount     Float
+  commission Float    @default(0)
+  date       DateTime
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([assetId])
+}
+
+model Withdrawal {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  assetId    String
+  asset      Asset    @relation(fields: [assetId], references: [id])
+  amount     Float
+  commission Float    @default(0)
+  date       DateTime
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([assetId])
 }
 
 model HistoricalPrice {

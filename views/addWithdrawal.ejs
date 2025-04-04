@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Withdrawal</title>
+  <link rel="stylesheet" href="/css/output.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <!-- Main Container (Card) -->
+  <div class="bg-gray-800 w-full max-w-2xl mx-auto rounded-lg shadow-lg p-8">
+    <!-- Title -->
+    <h1 class="text-3xl font-bold mb-6 text-center">Add Withdrawal</h1>
+
+    <!-- Status Messages Container -->
+    <div id="statusMessages" class="mb-4"></div>
+    
+    <!-- FORM -->
+    <form id="withdrawalForm" class="space-y-6">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+      <!-- Date/Time -->
+      <div>
+        <label for="date" class="block text-sm font-medium mb-1">Date</label>
+        <input
+          type="datetime-local"
+          id="date"
+          name="date"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          required
+        />
+      </div>
+      
+      <!-- Asset -->
+      <div>
+        <label for="assetId" class="block text-sm font-medium mb-1">Asset</label>
+        <select
+          id="assetId"
+          name="assetId"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          required
+        >
+          <option value="">Select an asset</option>
+          <% assets.forEach(asset => { 
+              const holding = portfolio.holdings.find(h => h.assetId === asset.id);
+              const balance = holding ? holding.balance : 0;
+          %>
+            <option value="<%= asset.id %>" 
+                    data-symbol="<%= asset.symbol %>"
+                    data-balance="<%= balance %>">
+              <%= asset.symbol %> - <%= asset.name %> (Available: <%= balance %>)
+            </option>
+          <% }); %>
+        </select>
+      </div>
+
+      <!-- Amount -->
+      <div>
+        <label for="amount" class="block text-sm font-medium mb-1">Amount</label>
+        <div class="flex">
+          <input
+            type="number"
+            step="any"
+            id="amount"
+            name="amount"
+            placeholder="0.00"
+            class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+            required
+          />
+          <span id="assetSymbol" class="bg-gray-700 border border-gray-600 border-l-0 px-3 flex items-center rounded-r-md font-medium">
+            --
+          </span>
+        </div>
+        <p id="balanceInfo" class="text-xs text-gray-400 mt-1">Available: --</p>
+      </div>
+
+      <!-- Commission -->
+      <div>
+        <label for="commission" class="block text-sm font-medium mb-1">Commission</label>
+        <div class="flex">
+          <input
+            type="number"
+            step="any"
+            id="commission"
+            name="commission"
+            placeholder="0.00"
+            value="0"
+            class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+          <span id="commissionSymbol" class="bg-gray-700 border border-gray-600 border-l-0 px-3 flex items-center rounded-r-md font-medium">
+            --
+          </span>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">Optional: Fee paid for this withdrawal</p>
+      </div>
+
+      <!-- Total (calculated) -->
+      <div>
+        <label for="totalAmount" class="block text-sm font-medium mb-1">Total Amount (with fees)</label>
+        <div class="flex">
+          <input
+            type="text"
+            id="totalAmount"
+            class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+            placeholder="Auto-calculated"
+            readonly
+          />
+          <span id="totalSymbol" class="bg-gray-700 border border-gray-600 border-l-0 px-3 flex items-center rounded-r-md font-medium">
+            --
+          </span>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <label for="notes" class="block text-sm font-medium mb-1">Notes</label>
+        <textarea
+          id="notes"
+          name="notes"
+          rows="3"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          placeholder="Optional: Add any additional information about this withdrawal"
+        ></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition font-semibold"
+      >
+        Add Withdrawal
+      </button>
+    </form>
+  </div>
+
+  <script src="/js/withdrawal.js"></script>
+</body>
+</html>

@@ -12,47 +12,61 @@
     <!-- Title -->
     <h1 class="text-3xl font-bold mb-6 text-center">Add Transaction</h1>
 
+    <!-- Status Messages Container -->
+    <div id="statusMessages" class="mb-4"></div>
+    
     <!-- FORM -->
     <form id="transactionForm" class="space-y-6">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
       <!-- Date/Time -->
       <div>
-        <label for="transactionDate" class="block text-sm font-medium mb-1">Date</label>
+        <label for="date" class="block text-sm font-medium mb-1">Date</label>
         <input
           type="datetime-local"
-          id="transactionDate"
+          id="date"
+          name="date"
           class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         />
       </div>
       
-      <!-- Trading Pair (Input with Datalist) -->
+      <!-- Trading Pair -->
       <div>
-        <label for="tradingPair" class="block text-sm font-medium mb-1">Trading Pair</label>
+        <label for="pairId" class="block text-sm font-medium mb-1">Trading Pair</label>
         <select
-          id="tradingPair"
+          id="pairId"
+          name="pairId"
           class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         >
           <option value="">Select a trading pair</option>
-          <% tradingPairs.forEach(pair => { %>
-            <option value="<%= pair.id %>"><%= pair.base.symbol %>/<%= pair.quote.symbol %></option>
+          <% TradingPair.forEach(pair => { %>
+            <option 
+              value="<%= pair.id %>" 
+              data-base="<%= pair.base.symbol %>" 
+              data-quote="<%= pair.quote.symbol %>"
+              data-base-id="<%= pair.base.id %>"
+              data-quote-id="<%= pair.quote.id %>"
+            >
+              <%= pair.base.symbol %>/<%= pair.quote.symbol %>
+            </option>
           <% }); %>
         </select>
       </div>
 
       <!-- Type (Buy/Sell) -->
       <div>
-        <label for="transactionType" class="block text-sm font-medium mb-1">Type</label>
+        <label for="type" class="block text-sm font-medium mb-1">Type</label>
         <div class="relative">
           <select
-            id="transactionType"
+            id="type"
+            name="type"
             class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-white"
             required
           >
-            <option value="Buy">Buy</option>
-            <option value="Sell">Sell</option>
+            <option value="BUY">Buy</option>
+            <option value="SELL">Sell</option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
             ▼
@@ -62,12 +76,13 @@
 
       <!-- Entry Price -->
       <div>
-        <label for="entryPrice" class="block text-sm font-medium mb-1">Entry Price</label>
+        <label for="price" class="block text-sm font-medium mb-1">Price</label>
         <input
           type="number"
           step="any"
-          id="entryPrice"
-          placeholder="0.03"
+          id="price"
+          name="price"
+          placeholder="0.00"
           class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         />
@@ -75,30 +90,53 @@
 
       <!-- Quantity -->
       <div>
-        <label for="quantity" class="block text-sm font-medium mb-1">Quantity</label>
+        <label for="amount" class="block text-sm font-medium mb-1">Quantity</label>
         <input
           type="number"
           step="any"
-          id="quantity"
-          placeholder="0.1"
+          id="amount"
+          name="amount"
+          placeholder="0.00"
           class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         />
       </div>
 
+      <!-- Commission -->
+      <div>
+        <label for="commission" class="block text-sm font-medium mb-1">Commission</label>
+        <div class="flex">
+          <input
+            type="number"
+            step="any"
+            id="commission"
+            name="commission"
+            placeholder="0.00"
+            value="0"
+            class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+        </div>
+        <p class="text-xs text-gray-400 mt-1">Optional: Fee paid for this transaction</p>
+      </div>
+
       <!-- Total (auto-calculated) -->
       <div>
         <label for="totalValue" class="block text-sm font-medium mb-1">Total</label>
-        <input
-          type="text"
-          id="totalValue"
-          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
-          placeholder="Auto-calculated"
-          readonly
-        />
+        <div class="flex">
+          <input
+            type="text"
+            id="totalValue"
+            class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+            placeholder="Auto-calculated"
+            readonly
+          />
+          <span id="quoteCurrency" class="bg-gray-700 border border-gray-600 border-l-0 px-3 flex items-center rounded-r-md font-medium">
+            --
+          </span>
+        </div>
       </div>
 
-      <!-- USD Equivalent (placeholder for real-time conversion) -->
+      <!-- USD Equivalent (calculated from API) -->
       <div>
         <label for="usdEquivalent" class="block text-sm font-medium mb-1">USD Equivalent</label>
         <input
@@ -110,6 +148,18 @@
         />
       </div>
 
+      <!-- Notes -->
+      <div>
+        <label for="notes" class="block text-sm font-medium mb-1">Notes</label>
+        <textarea
+          id="notes"
+          name="notes"
+          rows="3"
+          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          placeholder="Optional: Add any additional information about this transaction"
+        ></textarea>
+      </div>
+
       <!-- Submit Button -->
       <button
         type="submit"
@@ -118,6 +168,8 @@
         Add Transaction
       </button>
     </form>
+  </div>
 
+  <script src="/js/transaction.js"></script>
 </body>
 </html>

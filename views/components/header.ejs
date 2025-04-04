@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Onboarding</title>
+    <link rel="stylesheet" href="/css/output.css" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <% if (locals.additionalScripts) { %>
+      <% additionalScripts.forEach(script => { %>
+        <script src="<%= script %>"></script>
+      <% }); %>
+    <% } %>
+  </head>
+  <body class="bg-gray-900 text-white min-h-screen">
+    <!-- Optional navigation bar -->
+    <% if (locals.showNav) { %>
+    <nav class="bg-[#131A24] border-b border-gray-700">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <!-- Logo and Branding -->
+          <div class="flex items-center space-x-2">
+            <img
+              src="./assets/navbar/logo.png"
+              alt="MoneyTrail Logo"
+              class="w-10 h-10 rounded-full"
+            />
+            <span class="hidden sm:block font-bold text-xl"
+              >MoneyTrail</span
+            >
+          </div>
+          
+          <!-- Optional Navigation Links -->
+          <% if (locals.navLinks) { %>
+          <div class="hidden sm:flex space-x-4">
+            <% navLinks.forEach(link => { %>
+              <a href="<%= link.href %>" class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                <% if (link.icon) { %>
+                  <i data-lucide="<%= link.icon %>" class="w-5 h-5"></i>
+                <% } %>
+                <span><%= link.text %></span>
+              </a>
+            <% }); %>
+          </div>
+          <% } %>
+          
+          <!-- User Profile Section (if user is logged in) -->
+          <% if (locals.user) { %>
+          <div class="relative flex items-center space-x-2">
+            <span class="hidden md:block">Hi, <%= user.name %></span>
+            <div class="relative">
+              <button id="account-btn" type="button"
+                class="relative flex rounded-full bg-[#131A24] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
+                <img src="<%= user.avatar || 'https://via.placeholder.com/40' %>" alt="Profile" class="w-10 h-10 rounded-full" />
+              </button>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </nav>
+    <% } %>
+
+    <!-- System messages (success, error, etc.) -->
+    <% if (locals.messages && (messages.success || messages.error || messages.info)) { %>
+    <div class="container mx-auto px-4 mt-4">
+      <% if (messages.success) { %>
+      <div class="bg-green-600 text-white p-4 rounded-md mb-4 flex items-center justify-between" id="successMessage">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span><%= messages.success %></span>
+        </div>
+        <button class="text-white hover:text-green-200" onclick="document.getElementById('successMessage').remove();">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+      <% } %>
+      
+      <% if (messages.error) { %>
+      <div class="bg-red-600 text-white p-4 rounded-md mb-4 flex items-center justify-between" id="errorMessage">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span><%= messages.error %></span>
+        </div>
+        <button class="text-white hover:text-red-200" onclick="document.getElementById('errorMessage').remove();">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+      <% } %>
+      
+      <% if (messages.info) { %>
+      <div class="bg-blue-600 text-white p-4 rounded-md mb-4 flex items-center justify-between" id="infoMessage">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span><%= messages.info %></span>
+        </div>
+        <button class="text-white hover:text-blue-200" onclick="document.getElementById('infoMessage').remove();">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+      <% } %>
+    </div>
+    <% } %>
+
+    <!-- Main content container -->
+    <div class="<%= locals.fullWidth ? '' : 'container mx-auto px-4' %> <%= locals.mainClass || '' %>">
+      <!-- Content from including template will be inserted here -->

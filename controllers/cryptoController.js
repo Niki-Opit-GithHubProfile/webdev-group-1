@@ -3,6 +3,9 @@ const cryptoApiService = require('../services/cryptoApiService');
 exports.getPrices = async (req, res) => {
   try {
     const { coins } = req.query;
+    if (!coins) {
+      return res.status(400).json({ success: false, message: 'Missing required parameter: coins' });
+    }
     const coinIds = coins.split(',');
     const prices = await cryptoApiService.getPrice(coinIds);
     
