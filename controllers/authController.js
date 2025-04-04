@@ -160,21 +160,22 @@ exports.loginUser = async (req, res) => {
 
     // Save session explicitly before redirecting
     req.session.save(err => {
-    if (err) {
-      console.error('Session save error:', err);
-      return res.render('auth/login', {
-        error: 'Login failed. Please try again.',
-        csrfToken: req.csrfToken()
-      });
-    }
+      if (err) {
+        console.error('Session save error:', err);
+        return res.render('auth/login', {
+          error: 'Login failed. Please try again.',
+          csrfToken: req.csrfToken()
+        });
+      }
     
-    // Check if first login (onboarding needed)
-    if (!user.completedOnboarding) {
-      return res.redirect('/onboarding');
-    }
-    
-    // Regular login - redirect to dashboard
-    return res.redirect('/dashboard');
+      // Check if first login (onboarding needed)
+      if (!user.completedOnboarding) {
+        return res.redirect('/onboarding');
+      }
+      
+      // Regular login - redirect to dashboard
+      return res.redirect('/dashboard');
+    });
   } catch (error) {
     console.error('Login error:', error);
     return res.render('auth/login', { 
