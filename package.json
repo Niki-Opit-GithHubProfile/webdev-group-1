@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "repository": {
     "url": "git+https://github.com/Niki-Opit-GithHubProfile/webdev-group-1.git"
   },

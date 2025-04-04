@@ -90,7 +90,7 @@ exports.registerUser = async (req, res) => {
       <div style="font-family: 'Helvetica', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>Welcome to MoneyTrail!</h2>
         <p>Thank you for signing up. Please verify your email to continue:</p>
-        <a href="http://localhost:3000/auth/verify/${verificationToken}" 
+        <a href="https://moneytrail.it/auth/verify/${verificationToken}" 
         style="background-color: #172836; 
           color: white; 
           padding: 14px 28px; 
