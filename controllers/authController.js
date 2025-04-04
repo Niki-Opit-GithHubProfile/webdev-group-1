@@ -157,6 +157,16 @@ exports.loginUser = async (req, res) => {
     // Set user session
     req.session.userId = user.id;
     req.session.isLoggedIn = true;
+
+    // Save session explicitly before redirecting
+    req.session.save(err => {
+    if (err) {
+      console.error('Session save error:', err);
+      return res.render('auth/login', {
+        error: 'Login failed. Please try again.',
+        csrfToken: req.csrfToken()
+      });
+    }
     
     // Check if first login (onboarding needed)
     if (!user.completedOnboarding) {
