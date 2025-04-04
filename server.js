@@ -15,7 +15,9 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-  origin: '*',
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://moneytrail.it'
+    : 'http://localhost:3000',
   credentials: true
 }));
 
@@ -43,7 +45,8 @@ app.use(
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
-      sameSite: 'lax'
+      sameSite: 'lax',
+      domain: '.moneytrail.it'
     }
   })
 );
