@@ -72,7 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!assetId || !amountInput.value) return;
     
     try {
-      const response = await fetch(`/portfolio/balance/${assetId}`);
+      const response = await fetch(`/portfolio/balance/${assetId}`, {
+        credentials: 'include'
+      });
       if (!response.ok) return;
       
       const data = await response.json();
@@ -104,7 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!assetId || !amountInput.value || !priceInput.value) return;
     
     try {
-      const response = await fetch(`/portfolio/balance/${assetId}`);
+      const response = await fetch(`/portfolio/balance/${assetId}`, {
+        credentials: 'include'
+      });
       if (!response.ok) return;
       
       const data = await response.json();
@@ -199,8 +203,10 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       if (shouldFetch) {
-        // Call our own API endpoint that wraps CoinGecko
-        const response = await fetch(`/api/prices?coins=${coinIds.join(',')}`);
+        // Call API endpoint that wraps CoinGecko
+        const response = await fetch(`/api/prices?coins=${coinIds.join(',')}`, {
+          credentials: 'include'
+        });
         
         if (!response.ok) {
           throw new Error('Failed to fetch cryptocurrency prices');

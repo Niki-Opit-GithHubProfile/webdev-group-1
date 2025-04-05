@@ -197,7 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
   async function fetchAssetHoldings() {
     try {
       // Get portfolio data
-      const portfolioResponse = await fetch('/portfolio');
+      const portfolioResponse = await fetch('/portfolio', {
+        credentials: 'include'
+      });
       const portfolioData = await portfolioResponse.json();
       
       if (!portfolioData.success) {
@@ -222,7 +224,9 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         console.log('API request for prices:', `/api/prices?coins=${coinIds.join(',')}`);
 
-        const priceResponse = await fetch(`/api/prices?coins=${coinIds.join(',')}`);
+        const priceResponse = await fetch(`/api/prices?coins=${coinIds.join(',')}`, {
+          credentials: 'include'
+        });
         const priceResult = await priceResponse.json();
 
         console.log('Raw price response:', priceResult);
@@ -665,7 +669,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Fetch historical data from backend
-      const historyResponse = await fetch(`/api/history/${mainAsset}/${days}`);
+      const historyResponse = await fetch(`/api/history/${mainAsset}/${days}`, {
+        credentials: 'include'
+      });
       const historyResult = await historyResponse.json();
       
       if (!historyResult.success) {
@@ -712,7 +718,9 @@ document.addEventListener('DOMContentLoaded', function() {
    */
   async function fetchTransactions() {
     try {
-      const response = await fetch('/transactions');
+      const response = await fetch('/transactions', {
+        credentials: 'include'
+      });
       const data = await response.json();
       
       if (data.success) {
@@ -796,7 +804,9 @@ document.addEventListener('DOMContentLoaded', function() {
    */
   async function fetchDeposits() {
     try {
-      const response = await fetch('/deposits');
+      const response = await fetch('/deposits', {
+        credentials: 'include'
+      });
       const data = await response.json();
       
       if (data.success) {
@@ -860,7 +870,9 @@ document.addEventListener('DOMContentLoaded', function() {
    */
   async function fetchWithdrawals() {
     try {
-      const response = await fetch('/withdrawals');
+      const response = await fetch('/withdrawals', {
+        credentials: 'include'
+      });
       const data = await response.json();
       
       if (data.success) {

@@ -46,6 +46,7 @@ app.use(
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
       sameSite: 'lax',
+      domain: process.env.NODE_ENV === 'production' ? 'moneytrail.it' : undefined
     }
   })
 );
@@ -61,6 +62,7 @@ const {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
+    domain: process.env.NODE_ENV === 'production' ? 'moneytrail.it' : undefined,
     path: '/'
   },
   size: 64,

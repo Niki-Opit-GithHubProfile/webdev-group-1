@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Submit the withdrawal
         const response = await fetch('/withdrawals', {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRF-Token': csrfToken

@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Submit the deposit
       const response = await fetch('/deposits', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': csrfToken
