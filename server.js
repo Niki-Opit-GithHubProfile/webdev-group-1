@@ -11,6 +11,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const isAuthenticated = require('./middlewares/isAuthenticated');
 const app = express();
+app.set('trust proxy', 1);
 app.use(helmet());
 
 // CORS configuration
@@ -45,7 +46,7 @@ app.use(
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
-      sameSite: 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       domain: process.env.NODE_ENV === 'production' ? 'moneytrail.it' : undefined
     }
   })
@@ -60,7 +61,7 @@ const {
   cookieName: 'csrf-token',
   cookieOptions: {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     secure: process.env.NODE_ENV === 'production',
     domain: process.env.NODE_ENV === 'production' ? 'moneytrail.it' : undefined,
     path: '/'
