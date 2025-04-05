@@ -1,33 +1,34 @@
 document.addEventListener('DOMContentLoaded', function() {
   const dateInputs = document.querySelectorAll('input[type="date"]');
-  
+
   dateInputs.forEach(input => {
+    // Set the default date to today if no value is pre-set
+    if (!input.value) {
+        const today = new Date().toISOString().split('T')[0];
+        input.value = today;
+    }
+
     input.addEventListener('click', function(e) {
-      // Get the text content area width (approximately first 70% of the input)
-      const inputRect = this.getBoundingClientRect();
-      const dateTextWidth = inputRect.width * 0.7;
-      
-      // Calculate click position relative to input field
-      const clickPositionX = e.clientX - inputRect.left;
-      
-      // If click is NOT in the date text area (left side), open the date picker
-      if (clickPositionX > dateTextWidth) {
-        // Prevent default to block text selection
+      const inputElement = this;
+      const inputRect = inputElement.getBoundingClientRect();
+      const clickX = e.clientX - inputRect.left; // Click position within the input
+      const manualInputAreaWidth = inputRect.width * 0.20;
+
+      // If the click is beyond the manual input area (on the right side)
+      if (clickX > manualInputAreaWidth) {
+        
         e.preventDefault();
-        // Focus and show date picker
-        this.focus();
-        // Trigger calendar open with a small delay
-        setTimeout(() => {
-          // Simulate a keyboard event that consistently opens the calendar
-          const event = new KeyboardEvent('keydown', {
-            key: 'ArrowDown',
-            keyCode: 40,
-            which: 40,
-            bubbles: true
-          });
-          this.dispatchEvent(event);
-        }, 50);
+        try {
+          setTimeout(() => {
+            inputElement.showPicker();
+          }, 0);
+        } catch (error) {
+          console.error("Error showing date picker:", error);
+          // Fallback: just focus the input if showPicker fails
+          inputElement.focus();
+        }
       }
     });
   });
-});
+
+}); 
