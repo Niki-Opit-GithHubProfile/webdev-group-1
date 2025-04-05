@@ -60,7 +60,7 @@ const {
   cookieOptions: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: false,
+    secure: process.env.NODE_ENV === 'production',
     path: '/'
   },
   size: 64,
@@ -73,6 +73,9 @@ app.use((req, res, next) => {
   res.locals.csrfToken = generateToken(req, res);
   next();
 });
+
+// Use CSRF protection for all POST requests
+app.use(doubleCsrfProtection);
 
 // Temporary disable content security restrictions and allow loading resources from any domain
 app.use((req, res, next) => {
@@ -102,9 +105,6 @@ app.get('/', (req, res) => {
   
   return res.render('home');
 });
-
-// Use CSRF protection for all POST requests
-app.use(doubleCsrfProtection);
 
 app.use((req, res, next) => {
   console.log('Session debug:', {
