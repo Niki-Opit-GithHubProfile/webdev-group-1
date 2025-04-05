@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Convert Modal</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+<!-- Modal Background -->
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <!-- Modal Container -->
+  <div class="bg-gray-200 rounded-lg p-6 w-full max-w-md">
+    <h2 class="text-lg font-semibold text-center mb-6">
+      Quick Convert: Instantly convert your crypto
+    </h2>
+
+    <form id="crypto-convert-form" class="space-y-4">
+      <!-- FROM -->
+      <div class="flex items-center justify-between bg-white rounded-md px-4 py-2">
+        <select name="fromCoin" class="w-1/2 bg-transparent outline-none">
+          <option value="BTC">Bitcoin (BTC)</option>
+          <option value="ETH">Ethereum (ETH)</option>
+          <option value="USDT">Tether (USDT)</option>
+          <option value="BNB">Binance Coin (BNB)</option>
+          <option value="SOL">Solana (SOL)</option>
+          <!-- Add more coins as needed -->
+        </select>
+        <input name="fromAmount" type="number" placeholder="0" class="w-1/3 text-right outline-none" />
+      </div>
+
+      <!-- Swap Icon -->
+      <div class="flex justify-center">
+        <div class="bg-white rounded-full p-2 shadow-md">
+          <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4 4m0 0l4-4m-4 4V3" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- TO -->
+      <div class="flex items-center justify-between bg-white rounded-md px-4 py-2">
+        <select name="toCoin" class="w-1/2 bg-transparent outline-none">
+          <option value="ETH">Ethereum (ETH)</option>
+          <option value="BTC">Bitcoin (BTC)</option>
+          <option value="USDT">Tether (USDT)</option>
+          <option value="BNB">Binance Coin (BNB)</option>
+          <option value="SOL">Solana (SOL)</option>
+          <!-- Add more coins as needed -->
+        </select>
+        <input name="toAmount" type="number" placeholder="0" class="w-1/3 text-right outline-none" disabled />
+      </div>
+
+      <!-- Convert Button -->
+      <div class="text-center pt-4">
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md shadow hover:bg-blue-700 transition">
+          Convert
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  document.getElementById('crypto-convert-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const fromCoin = e.target.fromCoin.value;
+    const toCoin = e.target.toCoin.value;
+    const fromAmount = parseFloat(e.target.fromAmount.value);
+
+    if (!fromAmount || fromAmount <= 0) return;
+
+    try {
+      // Example API: CoinGecko or your own server proxy
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${fromCoin.toLowerCase()}&vs_currencies=${toCoin.toLowerCase()}`);
+      const data = await res.json();
+      const rate = data[fromCoin.toLowerCase()][toCoin.toLowerCase()];
+      e.target.toAmount.value = (fromAmount * rate).toFixed(6);
+    } catch (err) {
+      console.error("Conversion error:", err);
+    }
+  });
+</script>
+
+</body>
+
+</html>

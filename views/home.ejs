@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,6 +14,7 @@
       margin: auto;
       padding: 0 1rem;
     }
+
     /* Improved Dropdown Styles for Account */
     .dropdown-menu {
       position: absolute;
@@ -22,7 +24,7 @@
       background: #1C2530;
       color: white;
       border-radius: 0.375rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       z-index: 50;
       min-width: 160px;
       display: none;
@@ -30,6 +32,7 @@
       transform: translateY(-5px);
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
+
     .dropdown-menu a {
       display: block;
       padding: 0.75rem 1rem;
@@ -37,14 +40,17 @@
       font-size: 14px;
       font-weight: 500;
     }
+
     .dropdown-menu a:hover {
       background-color: #2A3340;
     }
+
     .dropdown-menu.show {
       display: block;
       opacity: 1;
       transform: translateY(0);
     }
+
     /* Slider Arrows Styles */
     .slider-arrow {
       background: rgba(55, 65, 81, 0.8);
@@ -54,25 +60,32 @@
       z-index: 20;
       transition: background 0.2s ease;
     }
+
     .slider-arrow:hover {
       background: rgba(55, 65, 81, 1);
     }
+
     /* Arrow positioning */
     #prev-btn {
       left: 2rem;
     }
+
     #next-btn {
       right: 2rem;
     }
+
     /* Media query to reposition arrows on small screens */
     @media (max-width: 640px) {
+
       #prev-btn,
       #next-btn {
         top: 30%;
       }
     }
+
     /* Default arrow vertical position on larger screens */
     @media (min-width: 641px) {
+
       #prev-btn,
       #next-btn {
         top: 50%;
@@ -80,6 +93,7 @@
     }
   </style>
 </head>
+
 <body class="bg-[#0B0E14] text-white">
   <!-- NAVIGATION BAR with Glassmorphism effect -->
   <nav class="bg-[#131A24] bg-opacity-80 backdrop-blur-md border-b border-gray-700 relative w-full z-50">
@@ -87,15 +101,18 @@
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center">
-          <img src="./assets/logo.png" alt="Logo" class="w-10 h-10 rounded-full" />
+          <img src="./assets/navbar/logo-transparent-money-trail.png" alt="Logo"
+            class="w-10 h-10 rounded-full" />
         </div>
         <!-- Desktop Navigation Links -->
         <div class="hidden sm:flex flex-1 justify-center space-x-4">
-          <a id="dashboard-btn" href="#" class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
+          <a id="dashboard-btn" href="#"
+            class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="bar-chart" class="w-5 h-5"></i>
             <span>My Dashboard</span>
           </a>
-          <a href="#" class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
+          <a href="#"
+            class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
             <span>Quick Convert</span>
           </a>
@@ -103,9 +120,10 @@
         <!-- Profile & Account Dropdown -->
         <div class="flex items-center space-x-4 relative">
           <button type="button" class="relative flex rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
-            <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
+            <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full" />
           </button>
-          <button id="account-btn" type="button" class="relative flex rounded-md px-4 py-2 bg-gray-700 hover:bg-gray-600 transition">
+          <button id="account-btn" type="button"
+            class="relative flex rounded-md px-4 py-2 bg-gray-700 hover:bg-gray-600 transition">
             Account
           </button>
           <div id="account-dropdown" class="dropdown-menu">
@@ -120,7 +138,8 @@
           </div>
         </div>
         <!-- Mobile Menu Button -->
-        <button type="button" id="menu-toggle" aria-expanded="false" class="sm:hidden relative p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
+        <button type="button" id="menu-toggle" aria-expanded="false"
+          class="sm:hidden relative p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
           <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
       </div>
@@ -128,7 +147,8 @@
     <!-- Mobile Menu -->
     <div class="sm:hidden hidden" id="mobile-menu">
       <div class="space-y-2 px-4 pt-4 pb-3">
-        <a id="dashboard-btn-mobile" href="#" class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
+        <a id="dashboard-btn-mobile" href="#"
+          class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
           <i data-lucide="bar-chart" class="w-5 h-5"></i>
           <span>My Dashboard</span>
         </a>
@@ -149,7 +169,8 @@
             No more complicated graphs. No more endless calculations.
             Just a simple, powerful tool to analyze, convert, and grow your crypto portfolio effortlessly.
           </p>
-          <button id="get-started-btn" class="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition px-6 py-3 rounded-md text-lg font-semibold shadow-lg">
+          <button id="get-started-btn"
+            class="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition px-6 py-3 rounded-md text-lg font-semibold shadow-lg">
             Get Started →
           </button>
         </div>
@@ -168,29 +189,34 @@
         <!-- Added responsive horizontal padding to narrow the content and avoid overlap -->
         <div id="features-carousel" class="flex transition-transform duration-500">
           <!-- Slide 1: Trading Made Easy -->
-          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
+          <div
+            class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
             <div class="lg:w-1/2 flex justify-center">
               <img src="./assets/home/asset2.jpg" alt="Crypto charts" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
             <div class="lg:w-1/2 text-center lg:text-left px-4">
               <h2 class="text-4xl lg:text-5xl font-bold mb-4">Trading Made Easy</h2>
               <p class="text-gray-300 mb-6 text-justify">
-                Clear charts, precise data, and a user-friendly interface designed to help you analyze your portfolio effortlessly.
+                Clear charts, precise data, and a user-friendly interface designed to help you analyze your portfolio
+                effortlessly.
               </p>
-              <button id="personal-dashboard-btn" class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+              <button id="personal-dashboard-btn"
+                class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
                 Personal Dashboard →
               </button>
             </div>
           </div>
           <!-- Slide 2: Make Data-Driven Decisions -->
-          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
+          <div
+            class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
             <div class="lg:w-1/2 flex justify-center">
               <img src="./assets/asset5.jpg" alt="Feature Two" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
             <div class="lg:w-1/2 text-center lg:text-left px-4">
               <h2 class="text-4xl lg:text-5xl font-bold mb-4">Make Data-Driven Decisions</h2>
               <p class="text-gray-300 mb-6 text-justify">
-                Access real-time performance insights, trends, and analytics to optimize your investments with confidence.
+                Access real-time performance insights, trends, and analytics to optimize your investments with
+                confidence.
               </p>
               <button class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
                 Learn More →
@@ -198,7 +224,8 @@
             </div>
           </div>
           <!-- Slide 3: Swap in Seconds -->
-          <div class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
+          <div
+            class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
             <div class="lg:w-1/2 flex justify-center">
               <img src="./assets/asset6.jpg" alt="Feature Three" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
@@ -213,7 +240,7 @@
             </div>
           </div>
         </div>
-        <!-- Navigation Arrows for Slider, positioned outside the content container --> 
+        <!-- Navigation Arrows for Slider, positioned outside the content container -->
         <button id="prev-btn" class="slider-arrow absolute left-2 transform -translate-y-1/2">
           <i data-lucide="chevron-left" class="w-6 h-6"></i>
         </button>
@@ -221,7 +248,7 @@
           <i data-lucide="chevron-right" class="w-6 h-6"></i>
         </button>
       </div>
-      <!-- Improved Dots Navigation positioned further down --> 
+      <!-- Improved Dots Navigation positioned further down -->
       <div id="features-dots" class="flex justify-center mt-10">
         <button data-index="0" class="dot w-4 h-4 rounded-full bg-blue-500 focus:outline-none"></button>
         <button data-index="1" class="dot w-4 h-4 rounded-full bg-gray-500 focus:outline-none"></button>
@@ -234,8 +261,9 @@
 
 
   <!-- Application Scripts -->
-<script src="/js/home-ui.js"></script>
-<script src="/js/home.js"></script>
+  <script src="/js/home-ui.js"></script>
+  <script src="/js/home.js"></script>
 
 </body>
+
 </html>
