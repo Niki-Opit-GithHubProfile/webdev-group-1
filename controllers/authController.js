@@ -199,7 +199,8 @@ exports.logoutUser = async (req, res) => {
       res.clearCookie('sessionId', {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        domain: process.env.NODE_ENV === 'production' ? 'moneytrail.it' : undefined
       });
       
       return res.redirect('/');
