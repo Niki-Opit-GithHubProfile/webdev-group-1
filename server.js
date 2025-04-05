@@ -46,7 +46,6 @@ app.use(
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
       sameSite: 'lax',
-      domain: '.moneytrail.it'
     }
   })
 );
@@ -106,6 +105,16 @@ app.get('/', (req, res) => {
 
 // Use CSRF protection for all POST requests
 app.use(doubleCsrfProtection);
+
+app.use((req, res, next) => {
+  console.log('Session debug:', {
+    hasSession: !!req.session,
+    userId: req.session?.userId,
+    isLoggedIn: req.session?.isLoggedIn,
+    cookies: req.cookies,
+  });
+  next();
+});
 
 // Protected dashboard route
 app.get('/dashboard', async (req, res) => {
