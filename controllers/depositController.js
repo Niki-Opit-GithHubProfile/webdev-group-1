@@ -62,7 +62,13 @@ exports.createDeposit = async (req, res) => {
     
     // Validate date is not in the future
     const depositDate = new Date(date);
-    if (depositDate > new Date()) {
+    const today = new Date();
+    
+    // Compare only the date parts, ignoring time
+    const depositDateOnly = new Date(depositDate.getFullYear(), depositDate.getMonth(), depositDate.getDate());
+    const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    if (depositDateOnly > todayOnly) {
       return res.status(400).json({ success: false, message: 'Deposit date cannot be in the future' });
     }
     

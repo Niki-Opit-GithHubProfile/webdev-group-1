@@ -77,7 +77,13 @@ exports.createTransaction = async (req, res) => {
     
     // Validate date is not in the future
     const transactionDate = new Date(date);
-    if (transactionDate > new Date()) {
+    const today = new Date();
+    
+    // Compare only the date parts, ignoring time
+    const transactionDateOnly = new Date(transactionDate.getFullYear(), transactionDate.getMonth(), transactionDate.getDate());
+    const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    if (transactionDateOnly > todayOnly) {
       return res.status(400).json({ success: false, message: 'Transaction date cannot be in the future' });
     }
     

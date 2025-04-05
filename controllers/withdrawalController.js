@@ -76,7 +76,13 @@ exports.createWithdrawal = async (req, res) => {
     
     // Validate date is not in the future
     const withdrawalDate = new Date(date);
-    if (withdrawalDate > new Date()) {
+    const today = new Date();
+    
+    // Compare only the date parts, ignoring time
+    const withdrawalDateOnly = new Date(withdrawalDate.getFullYear(), withdrawalDate.getMonth(), withdrawalDate.getDate());
+    const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    if (withdrawalDateOnly > todayOnly) {
       return res.status(400).json({ success: false, message: 'Withdrawal date cannot be in the future' });
     }
     
