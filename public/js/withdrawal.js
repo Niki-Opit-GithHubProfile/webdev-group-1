@@ -6,13 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const commissionSymbol = document.getElementById('commissionSymbol');
     const totalSymbol = document.getElementById('totalSymbol');
     const balanceInfo = document.getElementById('balanceInfo');
-    const amountInput = document.getElementById('amount');
-    const commissionInput = document.getElementById('commission');
-    const totalAmountInput = document.getElementById('totalAmount');
+    const amountDisplay = document.getElementById('amountDisplay');
+    const commissionDisplay = document.getElementById('commissionDisplay');
+    const amount = document.getElementById('amount');
+    const commission = document.getElementById('commission');
+    const totalAmount = document.getElementById('totalAmount');
     
     // Initialize formatting for numeric inputs
     if (window.FormatUtils) {
-      FormatUtils.setupNumericInputs([amountInput, commissionInput, totalAmountInput]);
+      FormatUtils.autoInitParallelInputs();
     }
 
     // Update asset symbol and available balance when asset is selected
@@ -29,39 +31,32 @@ document.addEventListener('DOMContentLoaded', function() {
       updateTotalAmount();
     });
     
-    // Update total amount when amount or commission changes
-    [amountInput, commissionInput].forEach(input => {
-      input.addEventListener('input', updateTotalAmount);
-    });
-    
     function updateTotalAmount() {
-      const amount = parseFloat(amountInput.dataset.rawValue || amountInput.value) || 0;
-      const commission = parseFloat(commissionInput.dataset.rawValue || commissionInput.value) || 0;
-      const total = amount + commission;
+      const amountValue = parseFloat(amount.value) || 0;
+      const commissionValue = parseFloat(commission.value) || 0;
+      const total = amountValue + commissionValue;
       
-      // Store raw value
-      totalAmountInput.dataset.rawValue = total;
-      // Format for display
-      totalAmountInput.value = FormatUtils.formatNumber(total, {minDecimals: 2, maxDecimals: 8});
-      
-      // Get selected asset balance
-      const selectedOption = assetSelect.options[assetSelect.selectedIndex];
-      if (selectedOption && selectedOption.value) {
-        const balance = parseFloat(selectedOption.dataset.balance) || 0;
-        
-        // Validate against balance
-        if (amount + commission > balance) {
-          totalAmountInput.classList.add('border-red-500');
-          balanceInfo.classList.add('text-red-500');
-          balanceInfo.classList.remove('text-gray-400');
-          balanceInfo.textContent = `Available: ${FormatUtils.formatNumber(balance)} ${selectedOption.dataset.symbol}`;
-        } else {
-          totalAmountInput.classList.remove('border-red-500');
-          balanceInfo.classList.remove('text-red-500');
-          balanceInfo.classList.add('text-gray-400');
-        }
+      // Update display and hidden fields if they exist
+      if (totalAmount) {
+        totalAmount.value = total;
+      }
+      if (document.getElementById('totalAmountDisplay')) {
+        document.getElementById('totalAmountDisplay').value = FormatUtils.formatNumber(total);
       }
     }
+
+    // Event listeners to recalculate on typing
+    if (amountDisplay) amountDisplay.addEventListener('input', function() {
+      const cleanedValue = this.value.replace(/\./g, '').replace(',', '.');
+      amount.value = parseFloat(cleanedValue) || 0;
+      updateTotalAmount();
+    });
+    
+    if (commissionDisplay) commissionDisplay.addEventListener('input', function() {
+      const cleanedValue = this.value.replace(/\./g, '').replace(',', '.');
+      commission.value = parseFloat(cleanedValue) || 0;
+      updateTotalAmount();
+    });
     
     // Form submission
     withdrawalForm.addEventListener('submit', async function(e) {
@@ -75,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(withdrawalForm);
         const withdrawalData = {
           assetId: formData.get('assetId'),
-          amount: parseFloat(amountInput.dataset.rawValue || formData.get('amount')),
-          commission: parseFloat(commissionInput.dataset.rawValue || formData.get('commission') || 0),
+          amount: parseFloat(amount.value),
+          commission: parseFloat(commission.value || 0),
           date: formData.get('date'),
           notes: formData.get('notes')
         };
@@ -135,7 +130,9 @@ document.addEventListener('DOMContentLoaded', function() {
           commissionSymbol.textContent = '--';
           totalSymbol.textContent = '--';
           balanceInfo.textContent = 'Available: --';
-          totalAmountInput.value = '';
+          totalAmount.value = '';
+          amountDisplay.value = '';
+          commissionDisplay.value = '';
         } else {
           showError(result.message);
         }

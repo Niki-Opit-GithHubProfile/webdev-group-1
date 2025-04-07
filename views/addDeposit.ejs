@@ -51,39 +51,55 @@
 
       <!-- Amount -->
       <div>
-        <label for="amount" class="block text-sm font-medium mb-1">Amount</label>
+        <label for="amountDisplay" class="block text-sm font-medium mb-1">Amount</label>
         <div class="flex">
+          <!-- Display field -->
           <input
-            type="number"
-            step="any"
-            id="amount"
-            name="amount"
+            type="text"
+            id="amountDisplay"
             placeholder="0.00"
             class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
             required
           />
+          
           <span id="assetSymbol" class="bg-gray-700 border border-gray-600 border-l-0 px-3 flex items-center rounded-r-md font-medium">
             --
           </span>
+
+          <!-- Hidden field for actual submission -->
+          <input
+            type="hidden"
+            id="amount"
+            name="amount"
+            value="0"
+          />
         </div>
       </div>
 
       <!-- Commission -->
       <div>
-        <label for="commission" class="block text-sm font-medium mb-1">Commission</label>
+        <label for="commissionDisplay" class="block text-sm font-medium mb-1">Commission</label>
         <div class="flex">
+          <!-- Display field -->
           <input
-            type="number"
-            step="any"
-            id="commission"
-            name="commission"
+            type="text"
+            id="commissionDisplay"
             placeholder="0.00"
             value="0"
             class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           />
+          
           <span id="commissionSymbol" class="bg-gray-700 border border-gray-600 border-l-0 px-3 flex items-center rounded-r-md font-medium">
             --
           </span>
+
+          <!-- Hidden field for actual submission -->
+          <input
+            type="hidden"
+            id="commission"
+            name="commission"
+            value="0"
+          />
         </div>
         <p class="text-xs text-gray-400 mt-1">Optional: Fee paid for this deposit</p>
       </div>

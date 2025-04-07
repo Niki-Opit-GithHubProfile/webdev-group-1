@@ -76,44 +76,58 @@
 
       <!-- Entry Price -->
       <div>
-        <label for="price" class="block text-sm font-medium mb-1">Price</label>
+        <label for="priceDisplay" class="block text-sm font-medium mb-1">Price</label>
+        
         <input
-          type="number"
-          step="any"
+          type="text"
+          id="priceDisplay"
+          placeholder="0.00"
+          class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          required
+        />
+        
+        <input
+          type="hidden"
           id="price"
           name="price"
-          placeholder="0.00"
-          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
-          required
+          value="0"
         />
       </div>
 
       <!-- Quantity -->
       <div>
-        <label for="amount" class="block text-sm font-medium mb-1">Quantity</label>
+        <label for="amountDisplay" class="block text-sm font-medium mb-1">Quantity</label>
+        
+        <input type="text"
+          id="amountDisplay"
+          placeholder="0.00"
+          class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          required>
+        
         <input
-          type="number"
-          step="any"
+          type="hidden"
           id="amount"
           name="amount"
           placeholder="0.00"
-          class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
-          required
         />
       </div>
 
       <!-- Commission -->
       <div>
-        <label for="commission" class="block text-sm font-medium mb-1">Commission</label>
+        <label for="commissionDisplay" class="block text-sm font-medium mb-1">Commission</label>
         <div class="flex">
           <input
-            type="number"
-            step="any"
+            type="text"
+            id="commissionDisplay"
+            placeholder="0.00"
+            class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+
+          <input
+            type="hidden"
             id="commission"
             name="commission"
-            placeholder="0.00"
             value="0"
-            class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           />
         </div>
         <p class="text-xs text-gray-400 mt-1">Optional: Fee paid for this transaction</p>

@@ -32,7 +32,7 @@
       </div>
       
       <!-- Asset -->
-      <div>
+      <div> 
         <label for="assetId" class="block text-sm font-medium mb-1">Asset</label>
         <select
           id="assetId"
@@ -40,7 +40,7 @@
           class="w-full rounded-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
           required
         >
-          <option value="">Select an asset</option>
+          <option value="">Select an asset</option> 
           <% assets.forEach(asset => { 
               const holding = portfolio.holdings.find(h => h.assetId === asset.id);
               const balance = holding ? holding.balance : 0;
@@ -56,13 +56,11 @@
 
       <!-- Amount -->
       <div>
-        <label for="amount" class="block text-sm font-medium mb-1">Amount</label>
+        <label for="amountDisplay" class="block text-sm font-medium mb-1">Amount</label>
         <div class="flex">
           <input
-            type="number"
-            step="any"
-            id="amount"
-            name="amount"
+            type="text"
+            id="amountDisplay"
             placeholder="0.00"
             class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
             required
@@ -73,16 +71,21 @@
         </div>
         <p id="balanceInfo" class="text-xs text-gray-400 mt-1">Available: --</p>
       </div>
+      <!-- Hidden field for real amount submission -->
+      <input
+        type="hidden"
+        id="amount"
+        name="amount"
+        value="0"
+      />
 
       <!-- Commission -->
       <div>
-        <label for="commission" class="block text-sm font-medium mb-1">Commission</label>
+        <label for="commissionDisplay" class="block text-sm font-medium mb-1">Commission</label>
         <div class="flex">
           <input
-            type="number"
-            step="any"
-            id="commission"
-            name="commission"
+            type="text"
+            id="commissionDisplay"
             placeholder="0.00"
             value="0"
             class="w-full rounded-l-md border border-gray-600 bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white"
@@ -93,6 +96,13 @@
         </div>
         <p class="text-xs text-gray-400 mt-1">Optional: Fee paid for this withdrawal</p>
       </div>
+      <!-- Hidden field for real commission submission -->
+      <input
+        type="hidden"
+        id="commission"
+        name="commission"
+        value="0"
+      />
 
       <!-- Total (calculated) -->
       <div>

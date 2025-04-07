@@ -3,16 +3,19 @@ document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('transactionForm');
   const typeSelect = document.getElementById('type');
   const pairSelect = document.getElementById('pairId');
-  const priceInput = document.getElementById('price');
-  const amountInput = document.getElementById('amount');
-  const commissionInput = document.getElementById('commission');
-  const totalValueInput = document.getElementById('totalValue');
+  const amount = document.getElementById('amount');
+  const price = document.getElementById('price');
+  const commission = document.getElementById('commission');
+  const amountDisplay = document.getElementById('amountDisplay');
+  const priceDisplay = document.getElementById('priceDisplay');
+  const commissionDisplay = document.getElementById('commissionDisplay');
+  const totalValue = document.getElementById('totalValue');
   const quoteCurrencySpan = document.getElementById('quoteCurrency');
   const dateInput = document.getElementById('date');
   const statusMessages = document.getElementById('statusMessages');
 
   if (window.FormatUtils) {
-    FormatUtils.setupNumericInputs([amountInput, priceInput, commissionInput, totalValueInput]);
+    FormatUtils.autoInitParallelInputs();
   }
   
   // Store price data cache
@@ -64,14 +67,9 @@ document.addEventListener('DOMContentLoaded', function() {
     calculateTotal();
   });
   
-  // Calculate total whenever inputs change
-  [amountInput, priceInput, commissionInput].forEach(input => {
-    input.addEventListener('input', calculateTotal);
-  });
-  
   // Function to check if user has enough base asset to sell
   async function checkSellBalance(assetId) {
-    if (!assetId || !amountInput.value) return;
+    if (!assetId || !amount.value) return;
     
     try {
       const response = await fetch(`/portfolio/balance/${assetId}`, {
@@ -83,16 +81,16 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!data.success) return;
       
       const balance = parseFloat(data.balance) || 0;
-      const amount = parseFloat(amountInput.value) || 0;
+      const amountValue = parseFloat(amount.value) || 0;
       
-      if (amount > balance) {
+      if (amountValue > balance) {
         const warning = document.getElementById('balanceWarning') || document.createElement('p');
         warning.id = 'balanceWarning';
         warning.className = 'text-red-500 text-xs mt-1';
         warning.textContent = `Warning: Insufficient balance. You have ${FormatUtils.formatNumber(balance)} units available.`;
         
         if (!document.getElementById('balanceWarning')) {
-          amountInput.parentElement.appendChild(warning);
+          amountDisplay.parentElement.appendChild(warning);
         }
       } else {
         const warning = document.getElementById('balanceWarning');
@@ -105,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Function to check if user has enough quote asset to buy
   async function checkBuyBalance(assetId) {
-    if (!assetId || !amountInput.value || !priceInput.value) return;
+    if (!assetId || !amount.value || !price.value) return;
     
     try {
       const response = await fetch(`/portfolio/balance/${assetId}`, {
@@ -117,10 +115,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!data.success) return;
       
       const balance = parseFloat(data.balance) || 0;
-      const amount = parseFloat(amountInput.value) || 0;
-      const price = parseFloat(priceInput.value) || 0;
-      const commission = parseFloat(commissionInput.value) || 0;
-      const total = (amount * price) + commission;
+      const amountValue = parseFloat(amount.value) || 0;
+      const priceValue = parseFloat(price.value) || 0;
+      const commissionValue = parseFloat(commission.value) || 0;
+      const total = (amountValue * priceValue) + commissionValue;
       
       if (total > balance) {
         const warning = document.getElementById('balanceWarning') || document.createElement('p');
@@ -129,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         warning.textContent = `Warning: Insufficient funds. You have ${FormatUtils.formatNumber(balance)} units available.`;
         
         if (!document.getElementById('balanceWarning')) {
-          totalValueInput.parentElement.appendChild(warning);
+          totalValue.parentElement.appendChild(warning);
         }
       } else {
         const warning = document.getElementById('balanceWarning');
@@ -142,38 +140,37 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Function to calculate the total value  
   function calculateTotal() {
-    if (!amountInput.value || !priceInput.value) {
-      totalValueInput.value = '';
-      return;
-    }
+    const amountValue = parseFloat(amount.value) || 0;
+    const priceValue = parseFloat(price.value) || 0;
+    const commissionValue = parseFloat(commission.value) || 0;
     
-    const type = typeSelect.value;
-    const amount = parseFloat(amountInput.dataset.rawValue || amountInput.value) || 0;
-    const price = parseFloat(priceInput.dataset.rawValue || priceInput.value) || 0;
-    const commission = parseFloat(commissionInput.dataset.rawValue || commissionInput.value) || 0;
+    const subtotal = amountValue * priceValue;
+    const total = subtotal + commissionValue;
     
-    let total = amount * price;
-    
-    if (type === 'BUY') {
-      total = total + commission;
-    } else if (type === 'SELL') {
-      total = total - commission;
-    }
-    
-    // Store raw value and display formatted value
-    totalValueInput.dataset.rawValue = total;
-    totalValueInput.value = FormatUtils.formatNumber(total, {minDecimals: 2, maxDecimals: 8});
-    
-    // Check balance after calculation
-    const selectedOption = pairSelect.options[pairSelect.selectedIndex];
-    if (selectedOption && selectedOption.value) {
-      if (type === 'SELL') {
-        checkSellBalance(selectedOption.dataset.baseId);
-      } else {
-        checkBuyBalance(selectedOption.dataset.quoteId);
-      }
+    // Update total
+    if (totalValue) {
+      totalValue.value = total;
     }
   }
+
+  // Add input listeners to update on typing
+  if (amountDisplay) amountDisplay.addEventListener('input', function() {
+    const cleanedValue = this.value.replace(/\./g, '').replace(',', '.');
+    amount.value = parseFloat(cleanedValue) || 0;
+    calculateTotal();
+  });
+  
+  if (priceDisplay) priceDisplay.addEventListener('input', function() {
+    const cleanedValue = this.value.replace(/\./g, '').replace(',', '.');
+    price.value = parseFloat(cleanedValue) || 0;
+    calculateTotal();
+  });
+  
+  if (commissionDisplay) commissionDisplay.addEventListener('input', function() {
+    const cleanedValue = this.value.replace(/\./g, '').replace(',', '.');
+    commission.value = parseFloat(cleanedValue) || 0;
+    calculateTotal();
+  });
   
   // Fetch cryptocurrency prices from our API
   async function fetchCoinPrices(baseId, quoteId) {
@@ -261,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Add total value
-    jsonData.total = parseFloat(totalValueInput.value) || 0;
+    jsonData.total = parseFloat(totalValue.value) || 0;
     
     // Send the data to the server
     fetch('/transactions', {
@@ -306,8 +303,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validate required fields
     const requiredFields = [
       { field: pairSelect, message: 'Please select a trading pair' },
-      { field: amountInput, message: 'Please enter a quantity' },
-      { field: priceInput, message: 'Please enter a price' },
+      { field: amountDisplay, message: 'Please enter a quantity' },
+      { field: priceDisplay, message: 'Please enter a price' },
       { field: dateInput, message: 'Please select a date' }
     ];
     
@@ -320,9 +317,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Validate numeric fields are positive
     const numericFields = [
-      { field: amountInput, message: 'Quantity must be a positive number' },
-      { field: priceInput, message: 'Price must be a positive number' },
-      { field: commissionInput, message: 'Commission must be a positive number' }
+      { field: amountDisplay, message: 'Quantity must be a positive number' },
+      { field: priceDisplay, message: 'Price must be a positive number' },
+      { field: commissionDisplay, message: 'Commission must be a positive number' }
     ];
     
     numericFields.forEach(({ field, message }) => {
@@ -420,7 +417,10 @@ document.addEventListener('DOMContentLoaded', function() {
     dateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
     
     // Reset calculated fields
-    totalValueInput.value = '';
+    totalValue.value = '';
+    if (amountDisplay) amountDisplay.value = '';
+    if (priceDisplay) priceDisplay.value = '';
+    if (commissionDisplay) commissionDisplay.value = '';
     quoteCurrencySpan.textContent = '--';
     
     // Clear any validation messages

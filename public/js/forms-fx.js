@@ -139,38 +139,74 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     
     /**
-     * Initialize numeric input formatting for the given input elements
-     * @param {HTMLInputElement[]} inputs - Array of input elements to format
-     * @param {Object} options - Formatting options
-     */
-    setupNumericInputs: function(inputs, options = {}) {
-      inputs.forEach(input => {
-        // Format on blur
-        input.addEventListener('blur', function() {
-          if (!this.value) return;
-          
-          // Store the raw numeric value as a data attribute
-          const numericValue = parseFloat(this.value);
-          this.dataset.rawValue = numericValue;
-          
-          // Determine config based on input type
-          const inputOptions = {...options};
-          if (this.id === 'amount' || this.id === 'cryptoAmount') {
-            inputOptions.maxDecimals = 8;
-          }
-          
-          // Format the display value
-          this.value = FormatUtils.formatNumber(numericValue, inputOptions);
-        });
+   * Attach parallel hidden-input behavior to a display input
+   * @param {HTMLInputElement} displayInput - The visible text input
+   * @param {HTMLInputElement} hiddenInput - The hidden input that will be submitted
+   * @param {Object} options - Additional formatting options
+   */
+    setupParallelInput: function(displayInput, hiddenInput, options = {}) {
+      // On focus, show the raw numeric value
+      displayInput.addEventListener('focus', function() {
+        // Show the raw value from the hidden input when focusing
+        displayInput.value = hiddenInput.value || "";
+      });
+
+      // On blur, parse input, update hidden field, then format display
+      displayInput.addEventListener('blur', function() {
+        if (!displayInput.value.trim()) {
+          displayInput.value = "";
+          hiddenInput.value = "";
+          return;
+        }
+
+        // Convert commas to periods and remove thousand separators for parsing
+        const cleanedValue = displayInput.value.replace(/\./g, '').replace(',', '.');
+        const numericValue = parseFloat(cleanedValue);
         
-        // When focusing, show the raw value for editing
-        input.addEventListener('focus', function() {
-          if (this.dataset.rawValue) {
-            this.value = this.dataset.rawValue;
-          }
-        });
+        if (isNaN(numericValue)) {
+          console.log("Could not parse value:", displayInput.value);
+          // Could either clear the field or revert to previous value
+          displayInput.value = hiddenInput.value || "";
+          return;
+        }
+        
+        // Store raw numeric value in hidden input
+        hiddenInput.value = numericValue;
+        
+        // Format the display with nice locale-specific formatting
+        const inputOptions = {...options};
+        // Special case for crypto amounts
+        if (displayInput.id === 'amountDisplay' || displayInput.id === 'cryptoAmountDisplay') {
+          inputOptions.maxDecimals = 8;
+        }
+        
+        // Apply formatted value to display input
+        displayInput.value = FormatUtils.formatNumber(numericValue, inputOptions);
+      });
+
+      // Initialize if hidden input already has a value
+      if (hiddenInput.value) {
+        const numericValue = parseFloat(hiddenInput.value);
+        if (!isNaN(numericValue)) {
+          displayInput.value = FormatUtils.formatNumber(numericValue, options);
+        }
+      }
+    },
+
+    /**
+     * Auto-initialize all parallel inputs by naming convention
+     */
+    autoInitParallelInputs: function() {
+      const displayFields = document.querySelectorAll('input[id$="Display"]');
+      displayFields.forEach(displayInput => {
+        const hiddenId = displayInput.id.replace('Display', '');
+        const hiddenInput = document.getElementById(hiddenId);
+        if (hiddenInput) {
+          this.setupParallelInput(displayInput, hiddenInput);
+        }
       });
     }
+  
   };
   
   // Auto-initialize known numeric inputs if they exist
@@ -179,7 +215,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .map(id => document.getElementById(id))
     .filter(el => el !== null);
   
-  if (numericInputs.length > 0) {
-    FormatUtils.setupNumericInputs(numericInputs);
+  // Initialize parallel inputs
+  if (FormatUtils.autoInitParallelInputs) {
+    FormatUtils.autoInitParallelInputs();
   }
 });
