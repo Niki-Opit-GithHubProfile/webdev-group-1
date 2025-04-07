@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const quoteCurrencySpan = document.getElementById('quoteCurrency');
   const dateInput = document.getElementById('date');
   const statusMessages = document.getElementById('statusMessages');
+
+  if (window.FormatUtils) {
+    FormatUtils.setupNumericInputs([amountInput, priceInput, commissionInput, totalValueInput]);
+  }
   
   // Store price data cache
   const priceCache = {};
@@ -85,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const warning = document.getElementById('balanceWarning') || document.createElement('p');
         warning.id = 'balanceWarning';
         warning.className = 'text-red-500 text-xs mt-1';
-        warning.textContent = `Warning: Insufficient balance. You have ${balance} units available.`;
+        warning.textContent = `Warning: Insufficient balance. You have ${FormatUtils.formatNumber(balance)} units available.`;
         
         if (!document.getElementById('balanceWarning')) {
           amountInput.parentElement.appendChild(warning);
@@ -122,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const warning = document.getElementById('balanceWarning') || document.createElement('p');
         warning.id = 'balanceWarning';
         warning.className = 'text-red-500 text-xs mt-1';
-        warning.textContent = `Warning: Insufficient funds. You have ${balance} units available.`;
+        warning.textContent = `Warning: Insufficient funds. You have ${FormatUtils.formatNumber(balance)} units available.`;
         
         if (!document.getElementById('balanceWarning')) {
           totalValueInput.parentElement.appendChild(warning);
@@ -136,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // Function to calculate the total value
+  // Function to calculate the total value  
   function calculateTotal() {
     if (!amountInput.value || !priceInput.value) {
       totalValueInput.value = '';
@@ -144,9 +148,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     const type = typeSelect.value;
-    const amount = parseFloat(amountInput.value) || 0;
-    const price = parseFloat(priceInput.value) || 0;
-    const commission = parseFloat(commissionInput.value) || 0;
+    const amount = parseFloat(amountInput.dataset.rawValue || amountInput.value) || 0;
+    const price = parseFloat(priceInput.dataset.rawValue || priceInput.value) || 0;
+    const commission = parseFloat(commissionInput.dataset.rawValue || commissionInput.value) || 0;
     
     let total = amount * price;
     
@@ -156,9 +160,10 @@ document.addEventListener('DOMContentLoaded', function() {
       total = total - commission;
     }
     
-    // Format the total to 8 decimal places (crypto standard)
-    totalValueInput.value = total.toFixed(8);
-        
+    // Store raw value and display formatted value
+    totalValueInput.dataset.rawValue = total;
+    totalValueInput.value = FormatUtils.formatNumber(total, {minDecimals: 2, maxDecimals: 8});
+    
     // Check balance after calculation
     const selectedOption = pairSelect.options[pairSelect.selectedIndex];
     if (selectedOption && selectedOption.value) {

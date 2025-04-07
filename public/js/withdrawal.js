@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const commissionInput = document.getElementById('commission');
     const totalAmountInput = document.getElementById('totalAmount');
     
+    // Initialize formatting for numeric inputs
+    if (window.FormatUtils) {
+      FormatUtils.setupNumericInputs([amountInput, commissionInput, totalAmountInput]);
+    }
+
     // Update asset symbol and available balance when asset is selected
     assetSelect.addEventListener('change', function() {
       const selectedOption = assetSelect.options[assetSelect.selectedIndex];
@@ -30,11 +35,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function updateTotalAmount() {
-      const amount = parseFloat(amountInput.value) || 0;
-      const commission = parseFloat(commissionInput.value) || 0;
-      const total = (amount + commission).toFixed(8);
+      const amount = parseFloat(amountInput.dataset.rawValue || amountInput.value) || 0;
+      const commission = parseFloat(commissionInput.dataset.rawValue || commissionInput.value) || 0;
+      const total = amount + commission;
       
-      totalAmountInput.value = total;
+      // Store raw value
+      totalAmountInput.dataset.rawValue = total;
+      // Format for display
+      totalAmountInput.value = FormatUtils.formatNumber(total, {minDecimals: 2, maxDecimals: 8});
       
       // Get selected asset balance
       const selectedOption = assetSelect.options[assetSelect.selectedIndex];
@@ -46,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
           totalAmountInput.classList.add('border-red-500');
           balanceInfo.classList.add('text-red-500');
           balanceInfo.classList.remove('text-gray-400');
+          balanceInfo.textContent = `Available: ${FormatUtils.formatNumber(balance)} ${selectedOption.dataset.symbol}`;
         } else {
           totalAmountInput.classList.remove('border-red-500');
           balanceInfo.classList.remove('text-red-500');
@@ -62,12 +71,12 @@ document.addEventListener('DOMContentLoaded', function() {
       statusMessages.innerHTML = '';
       
       try {
-        // Get form data
+        // Get form data using raw values
         const formData = new FormData(withdrawalForm);
         const withdrawalData = {
           assetId: formData.get('assetId'),
-          amount: formData.get('amount'),
-          commission: formData.get('commission'),
+          amount: parseFloat(amountInput.dataset.rawValue || formData.get('amount')),
+          commission: parseFloat(commissionInput.dataset.rawValue || formData.get('commission') || 0),
           date: formData.get('date'),
           notes: formData.get('notes')
         };

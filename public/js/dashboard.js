@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let cachedDeposits = [];
   let cachedWithdrawals = [];
 
-  
+
   // Initialize Lucide icons
   lucide.createIcons();
 
@@ -306,24 +306,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   /**
-   * Format currency values
-   */
+ * Format currency values
+ */
   function formatCurrency(value, currency = 'usd') {
-    if (currency === 'usd') {
-      return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return `${value.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 8 })} ${currency.toUpperCase()}`;
+    // Use the FormatUtils version
+    return FormatUtils.formatCurrency(value, currency);
   }
-  
+
   /**
    * Format crypto amounts with appropriate precision
    */
   function formatCryptoAmount(amount, symbol) {
-    // Use more decimal places for smaller value cryptos
-    const highValueCryptos = ['btc', 'eth', 'bnb'];
-    const precision = highValueCryptos.includes(symbol) ? 8 : 2;
-    
-    return `${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: precision })} ${symbol.toUpperCase()}`;
+    // Use the FormatUtils version
+    return FormatUtils.formatCryptoAmount(amount, symbol);
   }
 
   /**
@@ -529,7 +524,7 @@ document.addEventListener('DOMContentLoaded', function() {
               label: function(context) {
                 const value = context.raw;
                 const percentage = (value / totalPortfolioValue * 100).toFixed(1);
-                return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+                return `${context.label}: ${FormatUtils.formatCurrency(value)} (${percentage}%)`;
               }
             }
           }
@@ -605,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
             intersect: false,
             callbacks: {
               label: function(context) {
-                return `${context.dataset.label}: ${formatCurrency(context.raw)}`;
+                return `${context.dataset.label}: ${FormatUtils.formatCurrency(context.raw)}`;
               }
             }
           }
@@ -623,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ticks: {
               color: '#9ca3af',
               callback: function(value) {
-                return formatCurrency(value);
+                return FormatUtils.formatCurrency(value);
               }
             },
             grid: {
@@ -775,10 +770,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <td class="px-4 py-2 border border-gray-600">${new Date(tx.date).toLocaleDateString(userLocale)}</td>
         <td class="px-4 py-2 border border-gray-600">${tx.pair.base.symbol}/${tx.pair.quote.symbol}</td>
         <td class="px-4 py-2 border border-gray-600">${tx.type}</td>
-        <td class="px-4 py-2 border border-gray-600">${tx.price.toFixed(2)}</td>
-        <td class="px-4 py-2 border border-gray-600">${tx.amount.toFixed(8)}</td>
-        <td class="px-4 py-2 border border-gray-600">${tx.commission ? tx.commission.toFixed(2) : '0.00'}</td>
-        <td class="px-4 py-2 border border-gray-600">${tx.total.toFixed(2)}</td>
+        <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(tx.price, {minDecimals: 2, maxDecimals: 4})}</td>
+        <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(tx.amount, {minDecimals: 2, maxDecimals: 8})}</td>
+        <td class="px-4 py-2 border border-gray-600">${tx.commission ? FormatUtils.formatNumber(tx.commission, {minDecimals: 2, maxDecimals: 4}) : '0.00'}</td>
+        <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(tx.total, {minDecimals: 2, maxDecimals: 4})}</td>
         <td class="px-4 py-2 border border-gray-600 ${profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}">
           ${profitLoss ? formatProfitLoss(profitLoss) : '-'}
         </td>
@@ -790,10 +785,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <td class="px-4 py-2 border border-gray-600">${new Date(tx.date).toLocaleDateString(userLocale)}</td>
         <td class="px-4 py-2 border border-gray-600">${tx.pair.base.symbol}/${tx.pair.quote.symbol}</td>
         <td class="px-4 py-2 border border-gray-600">${tx.type}</td>
-        <td class="px-4 py-2 border border-gray-600">${tx.price.toFixed(2)}</td>
-        <td class="px-4 py-2 border border-gray-600">${tx.amount.toFixed(8)}</td>
+        <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(tx.price, {minDecimals: 2, maxDecimals: 4})}</td>
+        <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(tx.amount, {minDecimals: 2, maxDecimals: 8})}</td>
         <td class="hidden px-4 py-2 border border-gray-600"></td> 
-        <td class="px-4 py-2 border border-gray-600">${tx.total.toFixed(2)}</td>
+        <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(tx.total, {minDecimals: 2, maxDecimals: 4})}</td>
         <td class="px-4 py-2 border border-gray-600 ${profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}">
           ${profitLoss ? formatProfitLoss(profitLoss) : '-'}
         </td>
@@ -850,9 +845,9 @@ document.addEventListener('DOMContentLoaded', function() {
         row.innerHTML = `
           <td class="px-4 py-2 border border-gray-600">${new Date(deposit.date).toLocaleDateString()}</td>
           <td class="px-4 py-2 border border-gray-600">${deposit.asset.symbol}</td>
-          <td class="px-4 py-2 border border-gray-600">${deposit.amount.toFixed(8)}</td>
-          <td class="px-4 py-2 border border-gray-600">${deposit.commission.toFixed(8)}</td>
-          <td class="px-4 py-2 border border-gray-600">${(deposit.amount + deposit.commission).toFixed(8)}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(deposit.amount, {minDecimals: 2, maxDecimals: 8})}</td>
+          <td class="px-4 py-2 border border-gray-600">${deposit.commission ? FormatUtils.formatNumber(deposit.commission, {minDecimals: 2, maxDecimals: 4}) : '0.00'}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(deposit.amount + deposit.commission, {minDecimals: 2, maxDecimals: 8})}</td>
           <td class="px-4 py-2 border border-gray-600">${deposit.notes ? deposit.notes.substring(0, 30) + (deposit.notes.length > 30 ? '...' : '') : ''}</td>
         `;
       } else {
@@ -860,9 +855,9 @@ document.addEventListener('DOMContentLoaded', function() {
         row.innerHTML = `
           <td class="px-4 py-2 border border-gray-600">${new Date(deposit.date).toLocaleDateString()}</td>
           <td class="px-4 py-2 border border-gray-600">${deposit.asset.symbol}</td>
-          <td class="px-4 py-2 border border-gray-600">${deposit.amount.toFixed(8)}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(deposit.amount, {minDecimals: 2, maxDecimals: 8})}</td>
           <td class="hidden px-4 py-2 border border-gray-600"></td>
-          <td class="px-4 py-2 border border-gray-600">${(deposit.amount + deposit.commission).toFixed(8)}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(deposit.amount + deposit.commission, {minDecimals: 2, maxDecimals: 8})}</td>
           <td class="hidden px-4 py-2 border border-gray-600"></td>
         `;
       }
@@ -917,9 +912,9 @@ document.addEventListener('DOMContentLoaded', function() {
         row.innerHTML = `
           <td class="px-4 py-2 border border-gray-600">${new Date(withdrawal.date).toLocaleDateString()}</td>
           <td class="px-4 py-2 border border-gray-600">${withdrawal.asset.symbol}</td>
-          <td class="px-4 py-2 border border-gray-600">${withdrawal.amount.toFixed(8)}</td>
-          <td class="px-4 py-2 border border-gray-600">${withdrawal.commission.toFixed(8)}</td>
-          <td class="px-4 py-2 border border-gray-600">${(withdrawal.amount + withdrawal.commission).toFixed(8)}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(withdrawal.amount, {minDecimals: 2, maxDecimals: 8})}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(withdrawal.commission, {minDecimals: 2, maxDecimals: 4})}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(withdrawal.amount + withdrawal.commission, {minDecimals: 2, maxDecimals: 8})}</td>
           <td class="px-4 py-2 border border-gray-600">${withdrawal.notes ? withdrawal.notes.substring(0, 30) + (withdrawal.notes.length > 30 ? '...' : '') : ''}</td>
         `;
       } else {
@@ -927,9 +922,9 @@ document.addEventListener('DOMContentLoaded', function() {
         row.innerHTML = `
           <td class="px-4 py-2 border border-gray-600">${new Date(withdrawal.date).toLocaleDateString()}</td>
           <td class="px-4 py-2 border border-gray-600">${withdrawal.asset.symbol}</td>
-          <td class="px-4 py-2 border border-gray-600">${withdrawal.amount.toFixed(8)}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(withdrawal.amount, {minDecimals: 2, maxDecimals: 8})}</td>
           <td class="hidden px-4 py-2 border border-gray-600"></td>
-          <td class="px-4 py-2 border border-gray-600">${(withdrawal.amount + withdrawal.commission).toFixed(8)}</td>
+          <td class="px-4 py-2 border border-gray-600">${FormatUtils.formatNumber(withdrawal.amount + withdrawal.commission, {minDecimals: 2, maxDecimals: 8})}</td>
           <td class="hidden px-4 py-2 border border-gray-600"></td>
         `;
       }

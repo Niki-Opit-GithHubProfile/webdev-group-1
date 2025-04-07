@@ -4,6 +4,38 @@ document.addEventListener('DOMContentLoaded', function() {
   const assetSelect = document.getElementById('assetId');
   const assetSymbol = document.getElementById('assetSymbol');
   const commissionSymbol = document.getElementById('commissionSymbol');
+  const amountInput = document.getElementById('amount');
+  const commissionInput = document.getElementById('commission');
+  const totalValueInput = document.getElementById('totalValue');
+
+  // Initialize formatting for numeric inputs
+  if (window.FormatUtils) {
+    FormatUtils.setupNumericInputs([amountInput, commissionInput, totalValueInput]);
+  }
+  
+  // Calculate total when amount or commission changes
+  [amountInput, commissionInput].forEach(input => {
+    input.addEventListener('input', calculateTotal);
+  });
+  
+  // Calculate total deposit value
+  function calculateTotal() {
+    if (!amountInput.value) {
+      totalValueInput.value = '';
+      return;
+    }
+    
+    // Use raw values for calculation
+    const amount = parseFloat(amountInput.dataset.rawValue || amountInput.value) || 0;
+    const commission = parseFloat(commissionInput.dataset.rawValue || commissionInput.value) || 0;
+    
+    // Calculate total (amount minus commission)
+    const total = amount - commission;
+    
+    // Store raw value and display formatted value
+    totalValueInput.dataset.rawValue = total;
+    totalValueInput.value = FormatUtils.formatNumber(total, {minDecimals: 2, maxDecimals: 8});
+  }
   
   // Update asset symbol when asset is selected
   assetSelect.addEventListener('change', function() {
@@ -22,12 +54,12 @@ document.addEventListener('DOMContentLoaded', function() {
     statusMessages.innerHTML = '';
     
     try {
-      // Get form data
+      // Get form data using raw values
       const formData = new FormData(depositForm);
       const depositData = {
         assetId: formData.get('assetId'),
-        amount: formData.get('amount'),
-        commission: formData.get('commission'),
+        amount: parseFloat(amountInput.dataset.rawValue || formData.get('amount')),
+        commission: parseFloat(commissionInput.dataset.rawValue || formData.get('commission') || 0),
         date: formData.get('date'),
         notes: formData.get('notes')
       };
