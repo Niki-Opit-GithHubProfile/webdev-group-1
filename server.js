@@ -185,7 +185,7 @@ app.use('/api', apiRoutes);
 app.use('/portfolio', portfolioRoutes);
 app.use('/assets', assetRoutes);
 app.use('/onboarding', onboardingRoutes);
-app.use('/quick-converter', quickConverterRoutes);
+app.use('/quickConverter', quickConverterRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
