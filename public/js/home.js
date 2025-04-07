@@ -43,7 +43,7 @@ function setupNavigationButtons() {
   }
   
   // Learn More button
-  const learnMoreBtn = document.querySelector("learn-more-btn");
+  const learnMoreBtn = document.getElementById("learn-more-btn");
   if (learnMoreBtn) {
     learnMoreBtn.addEventListener('click', function() {
       window.location.href = '/auth/signup';
