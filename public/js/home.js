@@ -1,3 +1,5 @@
+console.log('home.js loaded');
+
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize Lucide Icons
   if (typeof lucide !== 'undefined') {
@@ -27,7 +29,7 @@ function setupNavigationButtons() {
   dashboardBtns.forEach(btn => {
     if (btn) {
       btn.addEventListener('click', function () {
-        window.location.href = '/onboarding/dashboard';
+        window.location.href = '/dashboard';
       });
     }
   });
@@ -41,7 +43,7 @@ function setupNavigationButtons() {
   convertBtns.forEach(btn => {
     if (btn) {
       btn.addEventListener('click', function () {
-        window.location.href = '/onboarding/quickConverter';
+        window.location.href = '/quickConverter';
       });
     }
   });
