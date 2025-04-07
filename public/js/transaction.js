@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const commissionInput = document.getElementById('commission');
   const totalValueInput = document.getElementById('totalValue');
   const quoteCurrencySpan = document.getElementById('quoteCurrency');
-  const usdEquivalentInput = document.getElementById('usdEquivalent');
   const dateInput = document.getElementById('date');
   const statusMessages = document.getElementById('statusMessages');
   
@@ -42,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     } else {
       quoteCurrencySpan.textContent = '--';
-      usdEquivalentInput.value = '';
     }
   });
   
@@ -142,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function calculateTotal() {
     if (!amountInput.value || !priceInput.value) {
       totalValueInput.value = '';
-      usdEquivalentInput.value = '';
       return;
     }
     
@@ -161,10 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Format the total to 8 decimal places (crypto standard)
     totalValueInput.value = total.toFixed(8);
-    
-    // Update USD equivalent
-    updateUsdEquivalent();
-    
+        
     // Check balance after calculation
     const selectedOption = pairSelect.options[pairSelect.selectedIndex];
     if (selectedOption && selectedOption.value) {
@@ -228,52 +222,10 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
       }
-      
-      // Calculate and display updated values
-      updateUsdEquivalent();
-      
+            
     } catch (error) {
       console.error('Error fetching prices:', error);
       showMessage('error', `Error fetching prices: ${error.message}`);
-    }
-  }
-  
-  // Update USD equivalent based on total and price data
-  function updateUsdEquivalent() {
-    const selectedOption = pairSelect.options[pairSelect.selectedIndex];
-    if (!selectedOption || !selectedOption.value) {
-      usdEquivalentInput.value = '';
-      return;
-    }
-    
-    const quoteId = selectedOption.dataset.quoteId;
-    const total = parseFloat(totalValueInput.value) || 0;
-    
-    if (!quoteId || !total) {
-      usdEquivalentInput.value = '';
-      return;
-    }
-    
-    try {
-      let usdValue = total;
-      
-      // If quote is not a stablecoin, convert to USD
-      if (quoteId !== 'tether' && quoteId !== 'usd-coin' && quoteId !== 'usd') {
-        if (priceCache[quoteId] && priceCache[quoteId].price) {
-          usdValue = total * priceCache[quoteId].price;
-        } else {
-          usdValue = 0;
-        }
-      }
-      
-      if (usdValue > 0) {
-        usdEquivalentInput.value = `$${usdValue.toFixed(2)} USD`;
-      } else {
-        usdEquivalentInput.value = 'Price data unavailable';
-      }
-    } catch (error) {
-      console.error('Error calculating USD value:', error);
-      usdEquivalentInput.value = 'Error calculating USD value';
     }
   }
   
@@ -464,7 +416,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Reset calculated fields
     totalValueInput.value = '';
-    usdEquivalentInput.value = '';
     quoteCurrencySpan.textContent = '--';
     
     // Clear any validation messages
