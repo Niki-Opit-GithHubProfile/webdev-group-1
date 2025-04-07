@@ -99,6 +99,7 @@ const assetRoutes = require('./routes/asset');
 const onboardingRoutes = require('./routes/onboarding');
 const depositRoutes = require('./routes/deposit');
 const withdrawalRoutes = require('./routes/withdrawal');
+const quickConverterRoutes = require('./routes/quickConverter');
 
 // Home route - Generate CSRF token
 app.get('/', (req, res) => {
@@ -184,6 +185,7 @@ app.use('/api', apiRoutes);
 app.use('/portfolio', portfolioRoutes);
 app.use('/assets', assetRoutes);
 app.use('/onboarding', onboardingRoutes);
+app.use('/quick-converter', quickConverterRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
