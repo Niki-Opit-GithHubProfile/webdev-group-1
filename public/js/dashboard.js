@@ -276,7 +276,9 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Conversion rates for calculation:', conversionRates);
     return portfolioHoldings.reduce((total, holding) => {
       const symbol = holding.asset.symbol.toLowerCase();
-      const price = conversionRates[symbol]?.usd || 0;
+      const price = (symbol === selectedCurrency) ? 
+      1.0 : 
+      (conversionRates[symbol]?.usd || 0);
       const holdingValue = holding.balance * price;
       console.log(`Holding: ${symbol}, Balance: ${holding.balance}, Price: ${price}, Value: ${holdingValue}`);
       return total + holdingValue;
@@ -400,11 +402,15 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Get asset value in current selected currency
       let assetValue;
-      if (selectedCurrency === 'usd') {
+      if (symbol === selectedCurrency) {
+        // Direct 1:1 conversion when asset currency matches display currency
+        assetValue = formatCryptoAmount(holding.balance, selectedCurrency);
+      } else if (selectedCurrency === 'usd') {
+        // Convert non-USD assets to USD
         const usdValue = holding.balance * (conversionRates[symbol]?.usd || 0);
         assetValue = formatCurrency(usdValue, 'usd');
       } else {
-        // If selected currency is a crypto, we need to convert
+        // Convert non-matching assets to selected currency via USD
         const usdValue = holding.balance * (conversionRates[symbol]?.usd || 0);
         const cryptoRate = conversionRates[selectedCurrency]?.usd;
         
@@ -412,7 +418,6 @@ document.addEventListener('DOMContentLoaded', function() {
           const cryptoValue = usdValue / cryptoRate;
           assetValue = formatCryptoAmount(cryptoValue, selectedCurrency);
         } else {
-          // Fallback if conversion rate is not available
           assetValue = `${holding.balance} ${holding.asset.symbol}`;
         }
       }
@@ -480,7 +485,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     portfolioHoldings.forEach((holding, index) => {
       const symbol = holding.asset.symbol.toLowerCase();
-      const price = conversionRates[symbol]?.usd || 0;
+      const price = (symbol === selectedCurrency) ? 
+      1.0 : 
+      (conversionRates[symbol]?.usd || 0);
       const value = holding.balance * price;
       
       labels.push(holding.asset.symbol);
