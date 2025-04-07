@@ -21,7 +21,7 @@ function setupNavigationButtons() {
   const dashboardBtns = [
   document.getElementById('dashboard-btn'),
   document.getElementById('dashboard-btn-mobile'),
-  document.getElementById('personal-dashboard')
+  document.getElementById('personal-dashboard-btn')
   ];
 
   dashboardBtns.forEach(btn => {
