@@ -18,13 +18,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function setupNavigationButtons() {
+  const dashboardBtns = [
+  document.getElementById('dashboard-btn'),
+  document.getElementById('dashboard-btn-mobile'),
+  document.getElementById('personal-dashboard')
+  ];
 
-  const dashboardBtn = document.getElementById('dashboard-btn');
-  if (dashboardBtn) {
-    dashboardBtn.addEventListener('click', function () {
-      window.location.href = '/onboarding/dashboard';
-    });
-  }
+  dashboardBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', function () {
+        window.location.href = '/onboarding/dashboard';
+      });
+    }
+  });
+
+  const convertBtns = [
+  document.getElementById('convert-btn'),
+  document.getElementById('convert-btn-mobile'),
+  document.getElementById('convert-now-btn')
+  ];
+
+  convertBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', function () {
+        window.location.href = '/onboarding/quickConverter';
+      });
+    }
+  });
+
 
   // Get Started button - redirect to signup
   const getStartedBtn = document.getElementById('get-started-btn');
@@ -34,14 +55,7 @@ function setupNavigationButtons() {
     });
   }
   
-  // Convert Now button
-  const convertBtn = document.getElementById('convert-btn');
-  if (convertBtn) {
-    convertBtn.addEventListener('click', function() {
-      window.location.href = '/onboarding/quickConverter';
-    });
-  }
-  
+
   // Learn More button
   const learnMoreBtn = document.getElementById("learn-more-btn");
   if (learnMoreBtn) {
