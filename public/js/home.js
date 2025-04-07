@@ -22,7 +22,7 @@ function setupNavigationButtons() {
   const dashboardBtn = document.getElementById('dashboard-btn');
   if (dashboardBtn) {
     dashboardBtn.addEventListener('click', function () {
-      window.location.href = '/dashboard';
+      window.location.href = '/onboarding/dashboard';
     });
   }
 
@@ -38,7 +38,7 @@ function setupNavigationButtons() {
   const convertBtn = document.getElementById('convert-btn');
   if (convertBtn) {
     convertBtn.addEventListener('click', function() {
-      window.location.href = '/quickConverter';
+      window.location.href = '/onboarding/quickConverter';
     });
   }
   
