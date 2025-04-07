@@ -16,9 +16,16 @@ document.addEventListener('DOMContentLoaded', function () {
   setupNavigationButtons();
 });
 
-/**
- */
+
 function setupNavigationButtons() {
+
+  const dashboardBtn = document.getElementById('dashboard-btn');
+  if (dashboardBtn) {
+    dashboardBtn.addEventListener('click', function () {
+      window.location.href = '/dashboard';
+    });
+  }
+
   // Get Started button - redirect to signup
   const getStartedBtn = document.getElementById('get-started-btn');
   if (getStartedBtn) {
@@ -39,7 +46,7 @@ function setupNavigationButtons() {
   const learnMoreBtn = document.querySelector("learn-more-btn");
   if (learnMoreBtn) {
     learnMoreBtn.addEventListener('click', function() {
-      window.location.href = '/auth/login';
+      window.location.href = '/auth/signup';
     });
   }
 }
