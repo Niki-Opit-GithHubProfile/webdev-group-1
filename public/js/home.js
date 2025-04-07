@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /**
- * Setup all navigation buttons with proper auth redirects
  */
 function setupNavigationButtons() {
   // Get Started button - redirect to signup
@@ -28,29 +27,16 @@ function setupNavigationButtons() {
     });
   }
   
-  // Dashboard button - redirect to dashboard or login
-  const dashboardBtn = document.getElementById('dashboard-btn');
-  const mobileDashboardBtn = document.getElementById('dashboard-btn-mobile');
-  const personalDashboardBtn = document.getElementById('personal-dashboard-btn');
-  
-  [dashboardBtn, mobileDashboardBtn, personalDashboardBtn].forEach(btn => {
-    if (btn) {
-      btn.addEventListener('click', function() {
-        window.location.href = '/auth/login';
-      });
-    }
-  });
-  
   // Convert Now button
-  const convertBtn = document.querySelector(".min-w-full:nth-child(3) button");
+  const convertBtn = document.getElementById('convert-btn');
   if (convertBtn) {
     convertBtn.addEventListener('click', function() {
-      window.location.href = '/auth/login';
+      window.location.href = '/quickConverter';
     });
   }
   
   // Learn More button
-  const learnMoreBtn = document.querySelector(".min-w-full:nth-child(2) button");
+  const learnMoreBtn = document.querySelector("learn-more-btn");
   if (learnMoreBtn) {
     learnMoreBtn.addEventListener('click', function() {
       window.location.href = '/auth/login';
