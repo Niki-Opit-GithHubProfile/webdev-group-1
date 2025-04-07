@@ -1,3 +1,5 @@
+console.log('home.js loaded');
+
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize Lucide Icons
   if (typeof lucide !== 'undefined') {
@@ -16,10 +18,37 @@ document.addEventListener('DOMContentLoaded', function () {
   setupNavigationButtons();
 });
 
-/**
- * Setup all navigation buttons with proper auth redirects
- */
+
 function setupNavigationButtons() {
+  const dashboardBtns = [
+  document.getElementById('dashboard-btn'),
+  document.getElementById('dashboard-btn-mobile'),
+  document.getElementById('personal-dashboard-btn')
+  ];
+
+  dashboardBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', function () {
+        window.location.href = '/dashboard';
+      });
+    }
+  });
+
+  const convertBtns = [
+  document.getElementById('convert-btn'),
+  document.getElementById('convert-btn-mobile'),
+  document.getElementById('convert-now-btn')
+  ];
+
+  convertBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', function () {
+        window.location.href = '/quickConverter';
+      });
+    }
+  });
+
+
   // Get Started button - redirect to signup
   const getStartedBtn = document.getElementById('get-started-btn');
   if (getStartedBtn) {
@@ -28,32 +57,12 @@ function setupNavigationButtons() {
     });
   }
   
-  // Dashboard button - redirect to dashboard or login
-  const dashboardBtn = document.getElementById('dashboard-btn');
-  const mobileDashboardBtn = document.getElementById('dashboard-btn-mobile');
-  const personalDashboardBtn = document.getElementById('personal-dashboard-btn');
-  
-  [dashboardBtn, mobileDashboardBtn, personalDashboardBtn].forEach(btn => {
-    if (btn) {
-      btn.addEventListener('click', function() {
-        window.location.href = '/auth/login';
-      });
-    }
-  });
-  
-  // Convert Now button
-  const convertBtn = document.querySelector(".min-w-full:nth-child(3) button");
-  if (convertBtn) {
-    convertBtn.addEventListener('click', function() {
-      window.location.href = '/auth/login';
-    });
-  }
-  
+
   // Learn More button
-  const learnMoreBtn = document.querySelector(".min-w-full:nth-child(2) button");
+  const learnMoreBtn = document.getElementById("learn-more-btn");
   if (learnMoreBtn) {
     learnMoreBtn.addEventListener('click', function() {
-      window.location.href = '/auth/login';
+      window.location.href = '/auth/signup';
     });
   }
 }

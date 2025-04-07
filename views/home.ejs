@@ -91,70 +91,124 @@
         top: 50%;
       }
     }
+
+    @keyframes slideFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideFadeOut {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+
+    .animate-slide-in {
+      animation: slideFadeIn 300ms ease-out forwards;
+    }
+
+    .animate-slide-out {
+      animation: slideFadeOut 300ms ease-in forwards;
+    }
   </style>
 </head>
 
 <body class="bg-[#0B0E14] text-white">
   <!-- NAVIGATION BAR with Glassmorphism effect -->
-  <nav class="bg-[#131A24] bg-opacity-80 backdrop-blur-md border-b border-gray-700 relative w-full z-50">
+  <!-- NAVIGATION BAR -->
+  <nav class="bg-[#131A24] bg-opacity-80 backdrop-blur-md border-b border-gray-700 w-full z-50 relative">
     <div class="custom-container">
-      <div class="flex h-16 items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center">
-          <img src="./assets/navbar/logo-transparent-money-trail.png" alt="Logo"
-            class="w-10 h-10 rounded-full" />
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Mobile Menu Button (1st on mobile) -->
+        <button type="button" id="menu-toggle"
+          class="sm:hidden order-1 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Logo + Name (2nd on mobile, 1st on desktop) -->
+        <div class="order-2 sm:order-1 flex items-center space-x-2">
+          <img src="./assets/navbar/logo-transparent-money-trail.png" alt="Logo" class="w-10 h-10 rounded-full" />
+          <span class=" sm:inline font-semibold text-lg text-white">MoneyTrail</span>
         </div>
-        <!-- Desktop Navigation Links -->
-        <div class="hidden sm:flex flex-1 justify-center space-x-4">
+
+        <!-- Desktop Navigation Links (hidden on mobile) -->
+        <div class="hidden sm:flex flex-1 justify-center space-x-4 order-2">
           <a id="dashboard-btn" href="#"
             class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="bar-chart" class="w-5 h-5"></i>
             <span>My Dashboard</span>
           </a>
-          <a href="#"
+          <a id="convert-btn" href="#"
             class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
             <span>Quick Convert</span>
           </a>
         </div>
-        <!-- Profile & Account Dropdown -->
-        <div class="flex items-center space-x-4 relative">
-          <button type="button" class="relative flex rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
-            <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full" />
-          </button>
+
+        <!-- Account Button + Dropdown (3rd) -->
+        <div class="flex items-center space-x-2 order-3 relative">
           <button id="account-btn" type="button"
-            class="relative flex rounded-md px-4 py-2 bg-gray-700 hover:bg-gray-600 transition">
-            Account
+            class="relative flex items-center space-x-1 rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white"
+            aria-expanded="false" aria-controls="account-dropdown">
+            <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
           </button>
-          <div id="account-dropdown" class="dropdown-menu">
-            <a href="/auth/signup" class="flex items-center space-x-2">
-              <i data-lucide="user-plus" class="w-4 h-4"></i>
-              <span>Sign Up</span>
+
+          <!-- Account Dropdown Menu -->
+          <div id="account-dropdown"
+            class="dropdown-menu absolute right-0 mt-2 bg-[#1C2530] text-white rounded-md shadow-lg z-50 min-w-[160px] opacity-0 scale-95 transform transition-all duration-200 ease-out pointer-events-none">
+
+            <a href="/auth/signup" class="flex items-center px-4 py-2 hover:bg-[#2A3340] text-sm">
+              <span class="inline-flex items-center">
+                <i data-lucide="user-plus" class="w-4 h-4 mr-2 inline-block"></i>
+                <span class="inline">Sign Up</span>
+              </span>
             </a>
-            <a href="/auth/login" class="flex items-center space-x-2 border-t border-gray-700">
-              <i data-lucide="log-in" class="w-4 h-4"></i>
-              <span>Login</span>
+
+            <a href="/auth/login"
+              class="flex items-center px-4 py-2 border-t border-gray-700 hover:bg-[#2A3340] text-sm">
+              <span class="inline-flex items-center">
+                <i data-lucide="log-in" class="w-4 h-4 mr-2 inline-block"></i>
+                <span class="inline">Login</span>
+              </span>
             </a>
           </div>
+
         </div>
-        <!-- Mobile Menu Button -->
-        <button type="button" id="menu-toggle" aria-expanded="false"
-          class="sm:hidden relative p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
-          <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
       </div>
     </div>
-    <!-- Mobile Menu -->
-    <div class="sm:hidden hidden" id="mobile-menu">
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu"
+      class="sm:hidden hidden opacity-0 pointer-events-none transition-all duration-300 ease-in-out">
       <div class="space-y-2 px-4 pt-4 pb-3">
         <a id="dashboard-btn-mobile" href="#"
           class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
           <i data-lucide="bar-chart" class="w-5 h-5"></i>
           <span>My Dashboard</span>
         </a>
+        <a id="convert-btn-mobile" href="#"
+          class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
+          <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+          <span>Quick Convert</span>
+        </a>
       </div>
     </div>
   </nav>
+
 
   <!-- MAIN CONTAINER (starts after fixed navbar) -->
   <div class="custom-container pt-24">
@@ -201,16 +255,17 @@
                 effortlessly.
               </p>
               <button id="personal-dashboard-btn"
-                class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+                class="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition px-6 py-3 rounded-md text-lg font-semibold shadow-lg">
                 Personal Dashboard →
               </button>
+
             </div>
           </div>
           <!-- Slide 2: Make Data-Driven Decisions -->
           <div
             class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
             <div class="lg:w-1/2 flex justify-center">
-              <img src="./assets/asset5.jpg" alt="Feature Two" class="rounded-lg shadow-xl w-full max-w-md" />
+              <img src="./assets/home/asset2.jpg" alt="Feature Two" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
             <div class="lg:w-1/2 text-center lg:text-left px-4">
               <h2 class="text-4xl lg:text-5xl font-bold mb-4">Make Data-Driven Decisions</h2>
@@ -218,7 +273,8 @@
                 Access real-time performance insights, trends, and analytics to optimize your investments with
                 confidence.
               </p>
-              <button class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+              <button id="learn-more-btn"
+                class="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition px-6 py-3 rounded-md text-lg font-semibold shadow-lg">
                 Learn More →
               </button>
             </div>
@@ -227,14 +283,15 @@
           <div
             class="min-w-full flex flex-col-reverse lg:flex-row items-center justify-between py-4 px-4 sm:px-8 md:px-16 lg:px-20">
             <div class="lg:w-1/2 flex justify-center">
-              <img src="./assets/asset6.jpg" alt="Feature Three" class="rounded-lg shadow-xl w-full max-w-md" />
+              <img src="./assets/home/asset2.jpg" alt="Feature Three" class="rounded-lg shadow-xl w-full max-w-md" />
             </div>
             <div class="lg:w-1/2 text-center lg:text-left px-4">
               <h2 class="text-4xl lg:text-5xl font-bold mb-4">Swap in Seconds</h2>
               <p class="text-gray-300 mb-6 text-justify">
                 Easily exchange cryptocurrencies with our fast and seamless conversion tool.
               </p>
-              <button class="bg-gray-700 hover:bg-gray-600 transition px-6 py-3 rounded-md text-lg font-semibold">
+              <button id="convert-now-btn"
+                class="mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition px-6 py-3 rounded-md text-lg font-semibold shadow-lg">
                 Convert Now →
               </button>
             </div>
@@ -249,10 +306,13 @@
         </button>
       </div>
       <!-- Improved Dots Navigation positioned further down -->
-      <div id="features-dots" class="flex justify-center mt-10">
-        <button data-index="0" class="dot w-4 h-4 rounded-full bg-blue-500 focus:outline-none"></button>
-        <button data-index="1" class="dot w-4 h-4 rounded-full bg-gray-500 focus:outline-none"></button>
-        <button data-index="2" class="dot w-4 h-4 rounded-full bg-gray-500 focus:outline-none"></button>
+      <div id="features-dots" class="flex justify-center mt-10 space-x-2">
+        <button data-index="0" class="dot w-4 h-4 rounded-full bg-blue-500 focus:outline-none"
+          aria-selected="true"></button>
+        <button data-index="1" class="dot w-4 h-4 rounded-full bg-gray-500 focus:outline-none"
+          aria-selected="false"></button>
+        <button data-index="2" class="dot w-4 h-4 rounded-full bg-gray-500 focus:outline-none"
+          aria-selected="false"></button>
       </div>
     </section>
   </div>
@@ -267,3 +327,28 @@
 </body>
 
 </html>
+
+<script defer>
+  // Lucide icons
+  lucide.createIcons();
+
+  // Toggle Account Dropdown
+  const accountBtn = document.getElementById("account-btn");
+  const accountDropdown = document.getElementById("account-dropdown");
+
+  accountBtn.addEventListener("click", () => {
+    accountDropdown.classList.toggle("opacity-0");
+    accountDropdown.classList.toggle("scale-95");
+    accountDropdown.classList.toggle("pointer-events-none");
+  });
+
+  // Toggle Mobile Menu
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  menuToggle.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+    mobileMenu.classList.toggle("opacity-0");
+    mobileMenu.classList.toggle("pointer-events-none");
+  });
+</script>
