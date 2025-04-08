@@ -51,6 +51,12 @@
       transform: translateY(0);
       pointer-events: auto;
     }
+
+    #right-sidebar.expanded {
+      width: 500px !important;
+    }
+</style>
+
   </style>
 </head>
 
@@ -220,7 +226,7 @@
         </div>
 
         <!--|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-| Right Sidebar-->
-        <div class="mt-6 mx-6 p-4 bg-gray-800 rounded-lg">
+        <div id="right-sidebar" class="mt-6 mx-6 p-4 bg-gray-800 rounded-lg">
 
           <!-- Action Buttons -->
           <div class="flex space-x-2 mb-4">
@@ -346,6 +352,8 @@
 
     const accountBtn = document.getElementById('account-btn');
     const accountDropdown = document.getElementById('account-dropdown');
+    const expandBtn = document.getElementById('right-sidebar-btn');
+    const rightSidebar = document.getElementById('right-sidebar');
 
     document.addEventListener("click", function (e) {
       if (accountBtn.contains(e.target)) {
@@ -353,6 +361,10 @@
       } else if (!accountDropdown.contains(e.target)) {
         accountDropdown.classList.add("hidden");
       }
+    });
+
+    expandBtn.addEventListener('click', () => {
+      rightSidebar.classList.toggle('expanded');
     });
   });
 </script>
