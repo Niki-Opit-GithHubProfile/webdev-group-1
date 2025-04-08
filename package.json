@@ -19,6 +19,8 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "@sendgrid/mail": "^8.1.4",
+    "@sentry/node": "^9.11.0",
+    "@sentry/profiling-node": "^9.11.0",
     "@tailwindcss/cli": "^4.0.17",
     "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
@@ -39,8 +41,8 @@
     "uuid": "^11.1.0"
   },
   "prisma": {
-  "seed": "node prisma/seed.js"
-},
+    "seed": "node prisma/seed.js"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",

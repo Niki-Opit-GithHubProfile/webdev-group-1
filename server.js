@@ -1,4 +1,6 @@
+require("./instrument.js");
 require('dotenv').config();
+const Sentry = require("@sentry/node");
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
@@ -186,6 +188,9 @@ app.use('/portfolio', portfolioRoutes);
 app.use('/assets', assetRoutes);
 app.use('/onboarding', onboardingRoutes);
 app.use('/quickConverter', quickConverterRoutes);
+
+// Sentry error tracking
+Sentry.setupExpressErrorHandler(app);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
