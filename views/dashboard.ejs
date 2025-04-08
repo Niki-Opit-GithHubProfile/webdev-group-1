@@ -349,7 +349,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    lucide.createIcons();
+    lucide.createIcons(); // Ensuring all icons are initially rendered
 
     const accountBtn = document.getElementById('account-btn');
     const accountDropdown = document.getElementById('account-dropdown');
@@ -366,17 +366,20 @@
       }
     });
 
-    // Toggle sidebar + icon
+    // Toggle sidebar + icon on button click
     expandBtn.addEventListener('click', () => {
+      // Toggle the sidebar's expanded state
       rightSidebar.classList.toggle('expanded');
 
-      // Toggle icon
-      const newIcon = rightSidebar.classList.contains('expanded')
-        ? 'square-chevron-right'
-        : 'square-chevron-left';
+      // Update the icon based on the expanded state
+      const newIcon = rightSidebar.classList.contains('expanded') ? 'square-chevron-right' : 'square-chevron-left';
 
+      // Change the icon
       expandIcon.setAttribute('data-lucide', newIcon);
-      lucide.createIcons(); // re-render the icon
+
+      // Re-render the icon (Lucide requires this after an attribute change)
+      lucide.createIcons();
     });
   });
+
 </script>
