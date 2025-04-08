@@ -11,50 +11,66 @@
 </head>
 
 <body class="bg-gray-900 text-white">
-  <nav class="bg-[#131A24]">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-16 items-center justify-between">
-        <!-- Logo and Branding -->
-        <div class="flex items-center space-x-2">
-          <img src="/assets/navbar/logo-transparent-money-trail.png" alt="MoneyTrail Logo"
-            class="w-10 h-10 rounded-full" />
-          <h1>
-            <span class="hidden sm:block font-bold text-xl">MoneyTrail</span>
-          </h1>
+
+  <nav class="bg-[#131A24] bg-opacity-80 backdrop-blur-md border-b border-gray-700 w-full z-50 relative">
+    <div class="custom-container">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Mobile Menu Button (1st on mobile) -->
+        <button type="button" id="menu-toggle"
+          class="sm:hidden order-1 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Logo + Name (2nd on mobile, 1st on desktop) -->
+        <div class="order-2 sm:order-1 flex items-center space-x-2">
+          <img src="./assets/navbar/logo-transparent-money-trail.png" alt="Logo" class="w-10 h-10 rounded-full" />
+          <span class=" sm:inline font-semibold text-lg text-white">MoneyTrail</span>
         </div>
-        <!-- Desktop Navigation Links -->
-        <div class="hidden sm:flex flex-1 justify-center space-x-6">
-          <a href="/dashboard" class="text-gray-300 hover:text-white transition flex items-center space-x-1">
+
+        <!-- Desktop Navigation Links (hidden on mobile) -->
+        <div class="hidden sm:flex flex-1 justify-center space-x-4 order-2">
+          <a id="dashboard-btn" href="#"
+            class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="bar-chart" class="w-5 h-5"></i>
             <span>My Dashboard</span>
           </a>
-          <a href="/quickConverter" class="text-gray-300 hover:text-white transition flex items-center space-x-1">
+          <a id="convert-btn" href="/quickConverter"
+            class="flex items-center space-x-2 rounded-md px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition">
             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
             <span>Quick Convert</span>
           </a>
         </div>
-        <!-- Account/Profile Section -->
-        <div class="relative flex items-center space-x-2">
-          <span class="hidden md:block">Hi, <%= user.name %></span>
+
+        <!-- Account Button + Dropdown (3rd) -->
+        <div class="flex items-center space-x-2 order-3 relative">
           <button id="account-btn" type="button"
-            class="relative flex rounded-full bg-[#131A24] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
+            class="relative flex items-center space-x-1 rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white"
+            aria-expanded="false" aria-controls="account-dropdown">
             <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
           </button>
-          <!-- Account Dropdown -->
-          <div id="account-dropdown" class="account-dropdown">
-            <a href="/profile">My Profile</a>
-            <a href="/auth/logout">Logout</a>
+
+          <!-- Account Dropdown Menu -->
+          <div class="relative flex items-center space-x-2">
+            <span class="hidden md:block">Hi, <%= user.name %></span>
+            <button id="account-btn" type="button"
+              class="relative flex rounded-full bg-[#131A24] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
+              <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
+            </button>
+            <!-- Account Dropdown -->
+            <div id="account-dropdown" class="account-dropdown">
+              <a href="/profile">My Profile</a>
+              <a href="/auth/logout">Logout</a>
+            </div>
           </div>
+
         </div>
-        <!-- Mobile Menu Button (Hamburger) -->
-        <button type="button" id="menu-toggle" aria-expanded="false"
-          class="sm:hidden ml-2 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white">
-          <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
       </div>
     </div>
-    <!-- Mobile Menu (hidden by default) -->
-    <div class="sm:hidden hidden" id="mobile-menu">
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu"
+      class="sm:hidden hidden opacity-0 pointer-events-none transition-all duration-300 ease-in-out">
       <div class="space-y-2 px-4 pt-4 pb-3">
         <a href="/dashboard"
           class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
