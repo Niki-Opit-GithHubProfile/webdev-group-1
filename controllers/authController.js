@@ -135,6 +135,15 @@ exports.loginUser = async (req, res) => {
         csrfToken: req.csrfToken()
       });
     }
+
+    // Check if user has google
+    if (user.googleId) {
+      return res.render('auth/login', { 
+        error: 'This account uses Google authentication. Please sign in with Google.',
+        csrfToken: req.csrfToken()
+      });
+    } 
+
     
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
