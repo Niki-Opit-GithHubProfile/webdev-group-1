@@ -52,11 +52,62 @@
       pointer-events: auto;
     }
 
-    #right-sidebar.expanded {
-      width: 1500px !important;
+    /* Make the page structure mobile-friendly */
+    .flex {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
     }
-  </style>
 
+    .flex-mobile-reverse {
+      flex-direction: column-reverse;
+    }
+
+    /* For small screens: Left Sidebar first, then main content, then right sidebar */
+    @media screen and (max-width: 768px) {
+      .flex {
+        flex-direction: column;
+        gap: 0;
+        /* remove gap for mobile */
+      }
+
+      .left-sidebar {
+        order: 1;
+        width: 100%;
+        /* make left sidebar full width */
+      }
+
+      .main-content {
+        order: 2;
+        width: 100%;
+      }
+
+      .right-sidebar {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+    }
+
+    /* For larger screens, maintain the original layout */
+    @media screen and (min-width: 769px) {
+      .left-sidebar {
+        order: 0;
+        width: 200px;
+      }
+
+      .main-content {
+        order: 1;
+        flex-grow: 1;
+      }
+
+      .right-sidebar {
+        order: 2;
+        width: 300px;
+      }
+    }
   </style>
 </head>
 
