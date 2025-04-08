@@ -122,6 +122,16 @@ app.use((req, res, next) => {
   next();
 });
 
+// Performance monitoring middleware
+app.use(async (req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`[${req.method}] ${req.originalUrl} - ${res.statusCode} in ${duration}ms`);
+  });
+  next();
+});
+
 // Protected dashboard route
 app.get('/dashboard', async (req, res) => {
   if (!req.session.userId) {
