@@ -42,30 +42,22 @@
           </a>
         </div>
 
-        <!-- Account Button + Dropdown (3rd) -->
-        <div class="flex items-center space-x-2 order-3 relative">
+        <!-- Account Dropdown Menu -->
+        <div class="relative flex items-center space-x-2">
+          <span class="hidden md:block">Hi, <%= user.name %></span>
           <button id="account-btn" type="button"
-            class="relative flex items-center space-x-1 rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white"
-            aria-expanded="false" aria-controls="account-dropdown">
+            class="relative flex rounded-full bg-[#131A24] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
             <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
           </button>
-
-          <!-- Account Dropdown Menu -->
-          <div class="relative flex items-center space-x-2">
-            <span class="hidden md:block">Hi, <%= user.name %></span>
-            <button id="account-btn" type="button"
-              class="relative flex rounded-full bg-[#131A24] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
-              <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
-            </button>
-            <!-- Account Dropdown -->
-            <div id="account-dropdown" class="account-dropdown">
-              <a href="/profile">My Profile</a>
-              <a href="/auth/logout">Logout</a>
-            </div>
+          <!-- Account Dropdown -->
+          <div id="account-dropdown" class="account-dropdown">
+            <a href="/profile">My Profile</a>
+            <a href="/auth/logout">Logout</a>
           </div>
-
         </div>
+
       </div>
+    </div>
     </div>
 
     <!-- Mobile Menu Dropdown -->
@@ -188,7 +180,7 @@
 
             <div class="object-contain w-6 h-full flex-shrink bg-white">
               <button id="right-sidebar-btn">
-                <img src="./assets/expand-right-sidebar.svg" alt="expand-icon" class="w-full h-full object-contain">
+                <i data-lucide="expand" alt="expand-icon" class="w-full h-full object-contain">
               </button>
             </div>
 
