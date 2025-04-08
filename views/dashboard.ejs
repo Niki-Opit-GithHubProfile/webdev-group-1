@@ -94,6 +94,7 @@
 
         <!-- Account Button + Dropdown (3rd) -->
         <div class="flex items-center space-x-2 order-3 relative">
+          <span class="hidden md:block">Hi, <%= user.name %></span>
           <button id="account-btn" type="button"
             class="relative flex items-center space-x-1 rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white"
             aria-expanded="false" aria-controls="account-dropdown">
@@ -233,7 +234,7 @@
 
             <div class="object-contain w-6 h-full flex-shrink">
               <button id="right-sidebar-btn">
-                <i data-lucide="log-out" alt="expand-icon" class=""></i>
+                <i data-lucide="square-chevron-left" alt="expand-icon" class=""></i>
               </button>
             </div>
 
@@ -354,7 +355,9 @@
     const accountDropdown = document.getElementById('account-dropdown');
     const expandBtn = document.getElementById('right-sidebar-btn');
     const rightSidebar = document.getElementById('right-sidebar');
+    const expandIcon = expandBtn.querySelector("i");
 
+    // Handle account dropdown
     document.addEventListener("click", function (e) {
       if (accountBtn.contains(e.target)) {
         accountDropdown.classList.toggle("hidden");
@@ -363,8 +366,17 @@
       }
     });
 
+    // Toggle sidebar + icon
     expandBtn.addEventListener('click', () => {
       rightSidebar.classList.toggle('expanded');
+
+      // Toggle icon
+      const newIcon = rightSidebar.classList.contains('expanded')
+        ? 'square-chevron-right'
+        : 'square-chevron-left';
+
+      expandIcon.setAttribute('data-lucide', newIcon);
+      lucide.createIcons(); // re-render the icon
     });
   });
 </script>
