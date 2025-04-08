@@ -8,6 +8,49 @@
   <link rel="stylesheet" href="/css/output.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://unpkg.com/lucide@latest" defer></script>
+  <style>
+    .custom-container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 1rem;
+    }
+
+    /* Improved Dropdown Styles for Account */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.75rem;
+      background: #1C2530;
+      color: white;
+      border-radius: 0.375rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 50;
+      min-width: 160px;
+      display: none;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #2A3340;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 
 <body class="bg-gray-900 text-white">
