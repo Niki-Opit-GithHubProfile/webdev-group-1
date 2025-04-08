@@ -20,7 +20,7 @@ exports.processOnboardingChoice = async (req, res) => {
     const userId = req.session.userId;
     
     if (!userId) {
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
     
     if (investorType === 'new') {
@@ -83,7 +83,7 @@ exports.processInitialAssets = async (req, res) => {
     const initialAssets = req.body.assets || [];
     
     if (!userId) {
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
     
     await prisma.$transaction(async (tx) => {

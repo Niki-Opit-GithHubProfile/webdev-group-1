@@ -12,6 +12,8 @@ const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const isAuthenticated = require('./middlewares/isAuthenticated');
+const passport = require('passport');
+const passportService = require('./services/passportService');
 const app = express();
 app.set('trust proxy', 1);
 app.use(helmet());
@@ -53,6 +55,10 @@ app.use(
     }
   })
 );
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // CSRF setup
 const {
