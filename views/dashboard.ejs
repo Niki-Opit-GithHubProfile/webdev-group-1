@@ -42,52 +42,50 @@
           </a>
         </div>
 
-        <!-- Account Dropdown Menu -->
-        <div class="relative flex items-center space-x-2">
-          <span class="hidden md:block">Hi, <%= user.name %></span>
+        <!-- Account Button + Dropdown (3rd) -->
+        <div class="flex items-center space-x-2 order-3 relative">
           <button id="account-btn" type="button"
-            class="relative flex rounded-full bg-[#131A24] p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white">
+            class="relative flex items-center space-x-1 rounded-full bg-[#131A24] p-2 text-gray-400 hover:text-white focus:ring-2 focus:ring-white"
+            aria-expanded="false" aria-controls="account-dropdown">
             <img src="./assets/navbar/default-propic.png" alt="Profile" class="w-10 h-10 rounded-full" />
           </button>
 
-          <!-- Dropdown -->
+          <!-- Account Dropdown Menu -->
           <div id="account-dropdown"
-            class="hidden absolute right-0 top-14 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-2 z-50 border border-gray-700">
-            <a href="/profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">My
-              Profile</a>
-            <a href="/auth/logout"
-              class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Logout</a>
+            class="dropdown-menu absolute right-0 mt-2 bg-[#1C2530] text-white rounded-md shadow-lg z-50 min-w-[160px] opacity-0 scale-95 transform transition-all duration-200 ease-out pointer-events-none">
+
+            <a href="/auth/logout" class="flex items-center px-4 py-2 hover:bg-[#2A3340] text-sm">
+              <span class="inline-flex items-center">
+                <i data-lucide="user-plus" class="w-4 h-4 mr-2 inline-block"></i>
+                <span class="inline">Sign Up</span>
+              </span>
+            </a>
+
+            <a href="/profile" class="flex items-center px-4 py-2 border-t border-gray-700 hover:bg-[#2A3340] text-sm">
+              <span class="inline-flex items-center">
+                <i data-lucide="log-in" class="w-4 h-4 mr-2 inline-block"></i>
+                <span class="inline">Login</span>
+              </span>
+            </a>
           </div>
+
         </div>
-
-
       </div>
-    </div>
     </div>
 
     <!-- Mobile Menu Dropdown -->
     <div id="mobile-menu"
       class="sm:hidden hidden opacity-0 pointer-events-none transition-all duration-300 ease-in-out">
       <div class="space-y-2 px-4 pt-4 pb-3">
-        <a href="/dashboard"
-          class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+        <a id="dashboard-btn-mobile" href="#"
+          class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
           <i data-lucide="bar-chart" class="w-5 h-5"></i>
           <span>My Dashboard</span>
         </a>
-        <a href="/quickConverter"
-          class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+        <a id="convert-btn-mobile" href="/quickConverter"
+          class="flex items-center space-x-2 rounded-md bg-gray-900 px-4 py-2 text-base font-medium text-white">
           <i data-lucide="refresh-cw" class="w-5 h-5"></i>
           <span>Quick Convert</span>
-        </a>
-        <a href="/profile"
-          class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
-          <i data-lucide="user" class="w-5 h-5"></i>
-          <span>Profile</span>
-        </a>
-        <a href="/auth/logout"
-          class="flex items-center space-x-2 rounded-md px-4 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
-          <i data-lucide="log-out" class="w-5 h-5"></i>
-          <span>Logout</span>
         </a>
       </div>
     </div>
